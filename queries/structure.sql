@@ -34,7 +34,7 @@ ALTER TABLE estados
 
 CREATE TABLE ciudades(
   cod_est VARCHAR(4) NOT NULL ,
-  num_consecutivo INTEGER NOT NULL,
+  num_consecutivo SERIAL NOT NULL,
   nombre_ciudad VARCHAR(20) NOT NULL,
 );
 
@@ -261,15 +261,15 @@ ALTER TABLE familia_productos
 --
 
 CREATE TABLE actividades(
-  cod_actividad VARCHAR(3) NOT NULL,
+  cod_servicio VARCHAR(3) NOT NULL,
   num_consecutivo INTEGER NOT NULL,
   descripcion_actividad TEXT NOT NULL,
   costo_actividad DECIMAL NOT NULL
 );
 
 ALTER TABLE actividades
-  ADD PRIMARY KEY (cod_actividad,num_consecutivo),
-  ADD CONSTRAINT num_consecutivo_fk FOREIGN KEY (num_consecutivo) REFERENCES servicios(num_consecutivo)
+  ADD PRIMARY KEY (cod_servicio,num_consecutivo),
+  ADD CONSTRAINT cod_servicio_fk FOREIGN KEY (cod_servicio) REFERENCES servicios(cod_servicio)
     ON DELETE RESTRICT 
     ON UPDATE CASCADE,
   ADD CONSTRAINT v_costo_actividad CHECK(costo_actividad>0);
@@ -346,7 +346,7 @@ ALTER TABLE posee
 
 CREATE TABLE se_le_hacen(
   placa VARCHAR(7) NOT NULL,
-  cod_actividad VARCHAR(5) NOT NULL,
+  cod_servicio VARCHAR(5) NOT NULL,
   num_consecutivo INTEGER NOT NULL
 );
 
@@ -355,7 +355,7 @@ ALTER TABLE se_le_hacen
   ADD CONSTRAINT placa_fk FOREIGN KEY (placa) REFERENCES vehiculos(placa)
     ON DELETE RESTRICT 
     ON UPDATE CASCADE,
-  ADD CONSTRAINT cod_actividad_fk FOREIGN KEY (cod_actividad) REFERENCES actividades(cod_actividad)
+  ADD CONSTRAINT cod_servicio_fk FOREIGN KEY (cod_servicio) REFERENCES actividades(cod_servicio)
     ON DELETE RESTRICT 
     ON UPDATE CASCADE,
   ADD CONSTRAINT num_consecutivo_fk FOREIGN KEY (num_consecutivo) REFERENCES actividades(num_consecutivo)
