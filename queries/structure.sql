@@ -1,5 +1,20 @@
 -- 
 
+CREATE DOMAIN dom_modalidad as VARCHAR(2) NOT NULL
+CHECK (VALUE = 'EB') AND (VALUE = 'ED') AND (VALUE = 'T')
+AND (VALUE = 'TD') AND (VALUE = 'TC');
+
+CREATE DOMAIN dom_aceite as VARCHAR(3) NOT NULL
+CHECK (VALUE = 'AM') AND (VALUE = 'AS') AND (VALUE = 'ASS')
+AND (VALUE = 'AAM') AND (VALUE = 'AMG');
+-- AM = aceite mineral AS= aceite sintetico ASS = aceite semisintetico 
+--AAM = aceite alta milla AMG= aceite multigrado 
+
+CREATE DOMAIN dom_cargo as VARCHAR(2) NOT NULL
+CHECK (VALUE = 'A');
+-- A= analista
+
+
 CREATE TABLE concesionario(
   rif VARCHAR(10) NOT NULL ,
   nombre VARCHAR(15) NOT NULL,
@@ -161,7 +176,6 @@ CREATE TABLE reserva(
   cod_servicio VARCHAR(3) NOT NULL,
   fecha_reservada TIMESTAMP NOT NULL,
   asistio BOOLEAN DEFAULT NULL,
-  tipo_servicio dom_tipo_servicio NOT NULL,
   kilometraje DECIMAL NOT NULL
 );
 
