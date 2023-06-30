@@ -1,12 +1,12 @@
 -- 
 
 CREATE DOMAIN dom_modalidad as VARCHAR(2) NOT NULL
-CHECK (VALUE = 'EB') AND (VALUE = 'ED') AND (VALUE = 'T')
-AND (VALUE = 'TD') AND (VALUE = 'TC');
+CHECK (VALUE = 'EB' AND VALUE = 'ED' AND VALUE = 'T'
+AND VALUE = 'TD' AND VALUE = 'TC');
 
 CREATE DOMAIN dom_aceite as VARCHAR(3) NOT NULL
-CHECK (VALUE = 'AM') AND (VALUE = 'AS') AND (VALUE = 'ASS')
-AND (VALUE = 'AAM') AND (VALUE = 'AMG');
+CHECK (VALUE = 'AM' AND VALUE = 'AS' AND VALUE = 'ASS'
+AND VALUE = 'AAM' AND VALUE = 'AMG');
 -- AM = aceite mineral AS= aceite sintetico ASS = aceite semisintetico 
 --AAM = aceite alta milla AMG= aceite multigrado 
 
@@ -14,26 +14,6 @@ CREATE DOMAIN dom_cargo as VARCHAR(2) NOT NULL
 CHECK (VALUE = 'A');
 -- A= analista
 
-
-CREATE TABLE concesionario(
-  rif VARCHAR(10) NOT NULL ,
-  nombre VARCHAR(15) NOT NULL,
-  cod_est VARCHAR(4) NOT NULL,
-  num_consecutivo INTEGER NOT NULL,
-  ci_encargados VARCHAR(8) NOT NULL
-);
-
-ALTER TABLE concesionario
-  ADD PRIMARY KEY (rif),
-  ADD CONSTRAINT cod_est_fk FOREIGN KEY (cod_est) REFERENCES ciudades(cod_est) 
-    ON DELETE RESTRICT 
-    ON UPDATE CASCADE,
-  ADD CONSTRAINT num_consecutivo_fk FOREIGN KEY (num_consecutivo) REFERENCES ciudades(num_consecutivo) 
-    ON DELETE RESTRICT 
-    ON UPDATE CASCADE,
-  ADD CONSTRAINT ci_fk FOREIGN KEY (ci) REFERENCES encargados(ci) 
-    ON DELETE RESTRICT 
-    ON UPDATE CASCADE;
 
 --
 
@@ -50,7 +30,7 @@ ALTER TABLE estados
 CREATE TABLE ciudades(
   cod_est VARCHAR(4) NOT NULL ,
   num_consecutivo SERIAL NOT NULL,
-  nombre_ciudad VARCHAR(20) NOT NULL,
+  nombre_ciudad VARCHAR(20) NOT NULL
 );
 
 ALTER TABLE ciudades
@@ -72,12 +52,12 @@ CREATE TABLE trabajadores(
 
 ALTER TABLE trabajadores
   ADD PRIMARY KEY (ci_trabajador),
-  ADD CONSTRAINT v_sueldo_trabajador CHECK(sueldo>=0);
+  ADD CONSTRAINT v_sueldo_trabajador CHECK(sueldo_trabajador>=0);
 
 --
 
 CREATE TABLE encargados(
-  ci_encargados VARCHAR(8) NOT NULL ,
+  ci_encargado VARCHAR(8) NOT NULL ,
   nombre_encargado VARCHAR(40) NOT NULL,
   direccion_encargado TEXT NOT NULL,
   telefono_encargado VARCHAR(11) ,
@@ -87,6 +67,63 @@ CREATE TABLE encargados(
 
 ALTER TABLE encargados
   ADD PRIMARY KEY (ci_encargado);
+
+--
+
+CREATE TABLE familia_productos(
+  cod_tipo VARCHAR(6) NOT NULL ,
+  nombre VARCHAR(15) NOT NULL
+);
+
+ALTER TABLE familia_productos
+  ADD PRIMARY KEY (cod_tipo);
+
+--
+
+CREATE TABLE descuentos(
+  porcentaje DECIMAL NOT NULL,
+  rango_min INTEGER NOT NULL,
+  rango_max INTEGER NOT NULL
+);
+
+ALTER TABLE descuentos
+  ADD PRIMARY KEY (porcentaje),
+  ADD CONSTRAINT v_rango_max CHECK(rango_max>rango_min);
+
+--
+
+CREATE TABLE clientes(
+  ci_cliente VARCHAR(7) NOT NULL ,
+  nombre_cliente VARCHAR(40) NOT NULL,
+  correo VARCHAR(20) NOT NULL,
+  telefono_principal VARCHAR(11) NOT NULL,
+  telefono_secundaria VARCHAR(11) NOT NULL
+);
+
+ALTER TABLE clientes
+  ADD PRIMARY KEY (ci_cliente);
+
+--
+
+CREATE TABLE concesionario(
+  rif VARCHAR(10) NOT NULL ,
+  nombre VARCHAR(15) NOT NULL,
+  cod_est VARCHAR(4) NOT NULL,
+  num_consecutivo INTEGER NOT NULL,
+  ci_encargado VARCHAR(8) NOT NULL
+);
+
+ALTER TABLE concesionario
+  ADD PRIMARY KEY (rif),
+  ADD CONSTRAINT cod_est_fk FOREIGN KEY (cod_est,num_consecutivo) REFERENCES ciudades(cod_est,num_consecutivo) 
+    ON DELETE RESTRICT 
+    ON UPDATE CASCADE,
+ /*  ADD CONSTRAINT num_consecutivo_fk FOREIGN KEY (num_consecutivo) REFERENCES ciudades(num_consecutivo) 
+    ON DELETE RESTRICT 
+    ON UPDATE CASCADE, */
+  ADD CONSTRAINT ci_encargado_fk FOREIGN KEY (ci_encargado) REFERENCES encargados(ci_encargado) 
+    ON DELETE RESTRICT 
+    ON UPDATE CASCADE;
 
 --
 
@@ -109,7 +146,7 @@ ALTER TABLE servicios
     ON DELETE RESTRICT 
     ON UPDATE CASCADE,
   ADD CONSTRAINT v_capacidad CHECK(capacidad>=0),
-  ADD CONSTRAINT v_capacidad CHECK(porcentaje>=0);
+  ADD CONSTRAINT v_porcentaje CHECK(porcentaje>=0);
 
 --
 
@@ -139,14 +176,14 @@ CREATE TABLE vehiculos(
   fecha_venta DATE NOT NULL,
   concesionario_vendedor VARCHAR(15) NOT NULL,
   info_importante VARCHAR(2) NOT NULL,
-  cod_mod VARCHAR(5) NOT NULL,
+  cod_modelo VARCHAR(5) NOT NULL,
   ci_cliente VARCHAR(8) NOT NULL 
 
 );
 
 ALTER TABLE vehiculos
   ADD PRIMARY KEY (placa),
-  ADD CONSTRAINT cod_mod_fk FOREIGN KEY (cod_modelo) REFERENCES modelos(cod_modelo)
+  ADD CONSTRAINT cod_modelo_fk FOREIGN KEY (cod_modelo) REFERENCES modelos(cod_modelo)
     ON DELETE RESTRICT 
     ON UPDATE CASCADE,
   ADD CONSTRAINT ci_cliente_fk FOREIGN KEY (ci_cliente) REFERENCES clientes(ci_cliente)
@@ -154,19 +191,6 @@ ALTER TABLE vehiculos
     ON UPDATE CASCADE,
   ADD CONSTRAINT uk_num_serial UNIQUE (num_serial),
   ADD CONSTRAINT uk_num_motor UNIQUE (num_motor);
-
---
-
-CREATE TABLE clientes(
-  ci_cliente VARCHAR(7) NOT NULL ,
-  nombre_cliente VARCHAR(40) NOT NULL,
-  correo VARCHAR(20) NOT NULL,
-  telefono_principal VARCHAR(11) NOT NULL,
-  telefono_secundaria VARCHAR(11) NOT NULL
-);
-
-ALTER TABLE clientes
-  ADD PRIMARY KEY (ci_cliente);
 
 --
 
@@ -179,12 +203,12 @@ CREATE TABLE reserva(
   kilometraje DECIMAL NOT NULL
 );
 
-ALTER TABLE clientes
+ALTER TABLE reserva
   ADD PRIMARY KEY (cod_reserva),
    ADD CONSTRAINT placa_fk FOREIGN KEY (placa) REFERENCES vehiculos(placa)
     ON DELETE RESTRICT 
     ON UPDATE CASCADE,
-   ADD CONSTRAINT cod_servicio_fk FOREIGN KEY (cod_servicio) REFERENCES servicios(cod_servicio)
+   ADD CONSTRAINT cod_servicio_fk FOREIGN KEY (cod_servicio) REFERENCES servicios(cod_servicio);
   
 --
 
@@ -222,8 +246,7 @@ CREATE TABLE productos(
   cantidad_minima INTEGER NOT NULL,
   cantidad_maxima INTEGER NOT NULL,
   cod_tipo VARCHAR(6) NOT NULL,
-  proveedor VARCHAR(15) NOT NULL,
-
+  proveedor VARCHAR(15) NOT NULL
 );
 
 ALTER TABLE productos
@@ -239,7 +262,7 @@ CREATE TABLE facturas(
   costo_mano_obra DECIMAL NOT NULL,
   monto_total DECIMAL NOT NULL,
   fecha_factura DATE NOT NULL,
-  num_unico DECIMAL NOT NULL
+  num_unico INTEGER NOT NULL
 );
 
 ALTER TABLE facturas
@@ -249,28 +272,6 @@ ALTER TABLE facturas
     ON UPDATE CASCADE,
   ADD CONSTRAINT v_costo_mano_obra CHECK(costo_mano_obra>0),
   ADD CONSTRAINT v_monto_total CHECK(monto_total>0);
---
-
-
-CREATE TABLE familia_productos(
-  cod_tipo VARCHAR(6) NOT NULL ,
-  nombre VARCHAR(15) NOT NULL
-);
-
-ALTER TABLE familia_productos
-  ADD PRIMARY KEY (cod_tipo);
-
---
-
-CREATE TABLE descuentos(
-  porcentaje VARCHAR(6) NOT NULL,
-  rango_min INTEGER NOT NULL,
-  rango_max INTEGER NOT NULL
-);
-
-ALTER TABLE familia_productos
-  ADD PRIMARY KEY (porcentaje),
-  ADD CONSTRAINT v_rango_max CHECK(rango_max>rango_min);
 
 --
 
@@ -298,7 +299,7 @@ CREATE TABLE detalle_servicio(
 );
 
 ALTER TABLE detalle_servicio
-  ADD PRIMARY KEY (cod_unico,num_detalle),
+  ADD PRIMARY KEY (num_unico,num_detalle),
   ADD CONSTRAINT num_unico_fk FOREIGN KEY (num_unico) REFERENCES ordenes_servicio(num_unico)
     ON DELETE RESTRICT 
     ON UPDATE CASCADE;
@@ -317,9 +318,10 @@ CREATE TABLE pagos(
 
 ALTER TABLE pagos
   ADD PRIMARY KEY (num_factura,num_consecutivo),
-  ADD CONSTRAINT num_factura_fk FOREIGN KEY (num_factura) REFERENCES facturas(num_factura)
-    ON DELETE RESTRICT 
-    ON UPDATE CASCADE;
+   ADD CONSTRAINT num_factura_fk FOREIGN KEY (num_factura) REFERENCES facturas(num_factura)
+   ON DELETE RESTRICT 
+   ON UPDATE CASCADE;
+
 
    -- FALTA LOS CHECK DE MODALIDAD, TARJETA Y BANCO 
 
@@ -365,14 +367,11 @@ CREATE TABLE se_le_hacen(
 );
 
 ALTER TABLE se_le_hacen
-  ADD PRIMARY KEY (placa,cod_actividad,num_consecutivo),
+  ADD PRIMARY KEY (placa,cod_servicio,num_consecutivo),
   ADD CONSTRAINT placa_fk FOREIGN KEY (placa) REFERENCES vehiculos(placa)
     ON DELETE RESTRICT 
     ON UPDATE CASCADE,
-  ADD CONSTRAINT cod_servicio_fk FOREIGN KEY (cod_servicio) REFERENCES actividades(cod_servicio)
-    ON DELETE RESTRICT 
-    ON UPDATE CASCADE,
-  ADD CONSTRAINT num_consecutivo_fk FOREIGN KEY (num_consecutivo) REFERENCES actividades(num_consecutivo)
+  ADD CONSTRAINT cod_servicio_fk FOREIGN KEY (cod_servicio,num_consecutivo) REFERENCES actividades(cod_servicio,num_consecutivo)
     ON DELETE RESTRICT 
     ON UPDATE CASCADE;
 
@@ -389,10 +388,7 @@ CREATE TABLE utiliza(
 
 ALTER TABLE utiliza
   ADD PRIMARY KEY (num_unico,num_detalle,ci_trabajador,cod_producto),
-  ADD CONSTRAINT num_unico_fk FOREIGN KEY (num_unico) REFERENCES detalle_servicio(num_unico)
-    ON DELETE RESTRICT 
-    ON UPDATE CASCADE,
-  ADD CONSTRAINT num_detalle_fk FOREIGN KEY (num_detalle) REFERENCES detalle_servicio(num_detalle)
+  ADD CONSTRAINT num_unico_fk FOREIGN KEY (num_unico,num_detalle) REFERENCES detalle_servicio(num_unico,num_detalle)
     ON DELETE RESTRICT 
     ON UPDATE CASCADE,
   ADD CONSTRAINT ci_trabajador_fk FOREIGN KEY (ci_trabajador) REFERENCES trabajadores(ci_trabajador)
@@ -431,38 +427,11 @@ CREATE TABLE especifica(
 
 ALTER TABLE especifica
   ADD PRIMARY KEY (num_unico,num_detalle,cod_actividad,num_consecutivo),
-  ADD CONSTRAINT num_unico_fk FOREIGN KEY (num_unico) REFERENCES detalle_servicio(num_unico)
+  ADD CONSTRAINT num_unico_fk FOREIGN KEY (num_unico,num_detalle) REFERENCES detalle_servicio(num_unico,num_detalle)
     ON DELETE RESTRICT 
     ON UPDATE CASCADE,
-  ADD CONSTRAINT num_detalle_fk FOREIGN KEY (num_detalle) REFERENCES detalle_servicio(num_detalle)
+  ADD CONSTRAINT cod_actividad_fk FOREIGN KEY (cod_actividad,num_consecutivo) REFERENCES actividades(cod_servicio,num_consecutivo)
     ON DELETE RESTRICT 
-    ON UPDATE CASCADE,
-  ADD CONSTRAINT cod_actividad_fk FOREIGN KEY (cod_actividad) REFERENCES actividades(cod_servicio)
-    ON DELETE RESTRICT 
-    ON UPDATE CASCADE,
-  ADD CONSTRAINT num_consecutivo_fk FOREIGN KEY (num_consecutivo) REFERENCES actividades(num_consecutivo)
-    ON DELETE RESTRICT 
-    ON UPDATE CASCADE,
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-
-
-  
-
-
+    ON UPDATE CASCADE;
   
   
-
-
