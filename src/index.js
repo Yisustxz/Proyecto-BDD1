@@ -3,7 +3,7 @@ const cors = require('cors')
 const morgan = require('morgan')
 
 const { PORT } = require('./config')
-//import apiRouter from './routes'
+const apiRouter = require('./routes')
 
 // App Declaration
 const app = express()
@@ -17,7 +17,7 @@ app.use(cors())
 app.use(express.json()) // middleware que transforma la req.body a un json
 
 // Routes
-//app.use('/', apiRouter)
+app.use('/', apiRouter)
 app.get('/', (req, res) => res.send('Hello World!'))
 
 // Starting the server
