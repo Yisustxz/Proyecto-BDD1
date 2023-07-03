@@ -61,7 +61,7 @@ CREATE TABLE encargados(
   nombre_encargado VARCHAR(40) NOT NULL,
   direccion_encargado TEXT NOT NULL,
   telefono_encargado VARCHAR(11) ,
-  sueldo_trabajador DECIMAL NOT NULL,
+  sueldo_encargado DECIMAL NOT NULL,
   cargo dom_cargo NOT NULL
 );
 
