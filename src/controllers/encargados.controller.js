@@ -69,8 +69,8 @@ const getEncargadoFromRequestBody = (requestBody) => {
     nombre_encargado,
     direccion_encargado,
     telefono_encargado,
-    sueldo_encargado,
-    cargo
+    correo_encargado,
+    telefono_secundario_encargado
   } = requestBody
 
   const newEncargado = [
@@ -78,8 +78,8 @@ const getEncargadoFromRequestBody = (requestBody) => {
     nombre_encargado,
     direccion_encargado,
     telefono_encargado,
-    sueldo_encargado,
-    cargo
+    correo_encargado,
+    telefono_secundario_encargado
   ]
 
   return newEncargado
@@ -90,16 +90,16 @@ const getEncargadoFromRequestBodyU = (requestBody) => {
     nombre_encargado,
     direccion_encargado,
     telefono_encargado,
-    sueldo_encargado,
-    cargo
+    correo_encargado,
+    telefono_secundario_encargado
   } = requestBody
 
   const newEncargado = [
     nombre_encargado,
     direccion_encargado,
     telefono_encargado,
-    sueldo_encargado,
-    cargo
+    correo_encargado,
+    telefono_secundario_encargado
   ]
 
   return newEncargado
@@ -110,7 +110,7 @@ const addEncargado = async (req, res) => {
     const newEncargado = getEncargadoFromRequestBody(req.body)
 
     const insertar = await pool.query({
-      text: 'INSERT INTO encargados (ci_encargado,nombre_encargado,direccion_encargado,telefono_encargado,sueldo_encargado,cargo) VALUES ($1, $2, $3, $4, $5, $6) RETURNING ci_encargado',
+      text: 'INSERT INTO encargados (ci_encargado,nombre_encargado,direccion_encargado,telefono_encargado, correo_encargado, telefono_secundario_encargado) VALUES ($1, $2, $3, $4, $5, $6) RETURNING ci_encargado',
       values: newEncargado
     })
     const insertedCi = insertar.rows[0].ci_encargado
@@ -129,7 +129,7 @@ const updateEncargado = async (req, res) => {
     const updateEncargado = getEncargadoFromRequestBodyU(req.body)
     updateEncargado.push(req.params.id)
     const response = await pool.query({
-      text: 'UPDATE encargados SET nombre_encargado = $1,  direccion_encargado = $2, telefono_encargado = $3,sueldo_encargado = $4, cargo = $5 WHERE ci_encargado = $6',
+      text: 'UPDATE encargados SET nombre_encargado = $1,  direccion_encargado = $2, telefono_encargado = $3,correo_trabajador = $4, telefono_secundario_encargado = $5 WHERE ci_encargado = $6',
       values: updateEncargado
     })
     if (response.rowCount === 0) {

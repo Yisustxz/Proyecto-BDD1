@@ -70,7 +70,7 @@ CREATE TABLE encargados(
   nombre_encargado VARCHAR(40) NOT NULL,
   direccion_encargado TEXT NOT NULL,
   telefono_encargado VARCHAR(11),
-  correo_trabajador VARCHAR(20),
+  correo_encargado VARCHAR(20),
   telefono_secundario_encargado VARCHAR(11)
 );
 
