@@ -62,7 +62,9 @@ ADD
 ADD
   CONSTRAINT v_sueldo_trabajador CHECK(sueldo_trabajador >= 0);
 
---
+-- INSERT INTO trabajadores (ci_trabajador, nombre_trabajador, direccion_trabajador, telefono_trabajador, sueldo_trabajador, cargo) VALUES ('2857817','lui','av a','041448456', 1000, 'A');
+
+
 CREATE TABLE encargados(
   ci_encargado VARCHAR(8) NOT NULL,
   nombre_encargado VARCHAR(40) NOT NULL,
@@ -151,6 +153,8 @@ ADD
   CONSTRAINT ci_encargado_fk FOREIGN KEY (ci_encargado) REFERENCES encargados(ci_encargado) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
+/* INSERT INTO clientes (ci_cliente, nombre_cliente, correo, telefono_principal, telefono_secundaria) VALUES ('2757817','lui','sdadad@gmail','041448456','041438428') 
+ */
 CREATE TABLE servicios(
   cod_servicio VARCHAR(3) NOT NULL,
   nombre_servicio VARCHAR(20) NOT NULL,
@@ -199,6 +203,8 @@ ADD
 ADD
   CONSTRAINT v_peso CHECK(peso > 0);
 
+--INSERT INTO modelos (cod_modelo, nombre_modelo, num_asiento, marca, peso, t_aceite, aceite_caja, octanaje, t_refrigerante) VALUES ('12345','twingo',4,'ferrari',500,'AM','SAE80W','91','R134');
+
 --
 CREATE TABLE vehiculos(
   placa VARCHAR(7) NOT NULL,
@@ -225,6 +231,8 @@ ADD
   CONSTRAINT uk_num_serial UNIQUE (num_serial),
 ADD
   CONSTRAINT uk_num_motor UNIQUE (num_motor);
+
+  -- INSERT INTO vehiculos (placa, ano_vehiculo, num_serial, num_motor, color, fecha_venta, concesionario_vendedor, info_importante, cod_modelo, ci_cliente) VALUES ('1111111','20/01/2001','2222222222','33333333','rojo','24/10/2023','ucab','xd','12345','2757817');
 
 --
 CREATE TABLE reserva(
@@ -274,6 +282,8 @@ ADD
   CONSTRAINT v_fecha_salida_estimada CHECK(fecha_salida_estimada >= fecha_entrada),
 ADD
   CONSTRAINT v_fecha_salida_real CHECK(fecha_salida_real >= fecha_entrada);
+
+  --INSERT INTO ordenes_servicio (ci_autorizado, nombre_autorizado, hora_entrada, hora_salida_estimada, hora_salida_real, fecha_entrada, fecha_salida_estimada, fecha_salida_real, placa, ci_trabajador) VALUES ('28575817','yisus','12:30:45','12:30:45','12:30:45','24/10/2023','24/10/2023','24/10/2023','1111111','2857817');
 
 --
 CREATE TABLE productos(
@@ -361,7 +371,7 @@ ADD
 ADD
   CONSTRAINT v_cantidad_detalle CHECK(cantidad > 0);
 
---
+-- --INSERT INTO detalle_servicio (num_unico, cantidad, costo, num_detalle) VALUES ('2',5,100,3);
 CREATE TABLE pagos(
   num_factura VARCHAR (10) NOT NULL,
   num_consecutivo SERIAL NOT NULL,
