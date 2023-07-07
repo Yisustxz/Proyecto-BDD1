@@ -1,12 +1,12 @@
 -- 
 
 CREATE DOMAIN dom_modalidad as VARCHAR(2) NOT NULL
-CHECK (VALUE = 'EB' AND VALUE = 'ED' AND VALUE = 'T'
-AND VALUE = 'TD' AND VALUE = 'TC');
+CHECK (VALUE = 'EB' OR VALUE = 'ED' OR VALUE = 'T'
+OR VALUE = 'TD' OR VALUE = 'TC');
 
 CREATE DOMAIN dom_aceite as VARCHAR(3) NOT NULL
-CHECK (VALUE = 'AM' AND VALUE = 'AS' AND VALUE = 'ASS'
-AND VALUE = 'AAM' AND VALUE = 'AMG');
+CHECK (VALUE = 'AM' OR VALUE = 'AS' OR VALUE = 'ASS'
+OR VALUE = 'AAM' OR VALUE = 'AMG');
 -- AM = aceite mineral AS= aceite sintetico ASS = aceite semisintetico 
 --AAM = aceite alta milla AMG= aceite multigrado 
 
@@ -54,20 +54,21 @@ ALTER TABLE trabajadores
   ADD PRIMARY KEY (ci_trabajador),
   ADD CONSTRAINT v_sueldo_trabajador CHECK(sueldo_trabajador>=0);
 
---
+-- INSERT INTO trabajadores (ci_trabajador, nombre_trabajador, direccion_trabajador, telefono_trabajador, sueldo_trabajador, cargo) VALUES ('2857817','lui','av a','041448456', 1000, 'A');
+
 
 CREATE TABLE encargados(
   ci_encargado VARCHAR(8) NOT NULL ,
   nombre_encargado VARCHAR(40) NOT NULL,
   direccion_encargado TEXT NOT NULL,
   telefono_encargado VARCHAR(11) ,
-  sueldo_trabajador DECIMAL NOT NULL,
+  sueldo_encargado DECIMAL NOT NULL,
   cargo dom_cargo NOT NULL
 );
 
 ALTER TABLE encargados
-  ADD PRIMARY KEY (ci_encargado);
-
+  ADD PRIMARY KEY (ci_encargado),
+   ADD CONSTRAINT v_sueldo_encargado CHECK(sueldo_encargado>=0);
 --
 
 CREATE TABLE familia_productos(
@@ -93,7 +94,7 @@ ALTER TABLE descuentos
 --
 
 CREATE TABLE clientes(
-  ci_cliente VARCHAR(7) NOT NULL ,
+  ci_cliente VARCHAR(8) NOT NULL ,
   nombre_cliente VARCHAR(40) NOT NULL,
   correo VARCHAR(20) NOT NULL,
   telefono_principal VARCHAR(11) NOT NULL,
@@ -105,6 +106,9 @@ ALTER TABLE clientes
 
 --
 
+/* INSERT INTO clientes (ci_cliente, nombre_cliente, correo, telefono_principal, telefono_secundaria) VALUES ('2757817','lui','sdadad@gmail','041448456','041438428') 
+ */
+ 
 CREATE TABLE concesionario(
   rif VARCHAR(10) NOT NULL ,
   nombre VARCHAR(15) NOT NULL,
@@ -165,6 +169,8 @@ CREATE TABLE modelos(
 ALTER TABLE modelos
   ADD PRIMARY KEY (cod_modelo);
 
+--INSERT INTO modelos (cod_modelo, nombre_modelo, num_asiento, marca, peso, t_aceite, aceite_caja, octanaje, t_refrigerante) VALUES ('12345','twingo',4,'ferrari',500,'AM','SAE80W','91','R134');
+
 --
 
 CREATE TABLE vehiculos(
@@ -175,11 +181,14 @@ CREATE TABLE vehiculos(
   color VARCHAR(10) NOT NULL,
   fecha_venta DATE NOT NULL,
   concesionario_vendedor VARCHAR(15) NOT NULL,
-  info_importante VARCHAR(2) NOT NULL,
+  info_importante TEXT NOT NULL,
   cod_modelo VARCHAR(5) NOT NULL,
   ci_cliente VARCHAR(8) NOT NULL 
 
 );
+
+-- INSERT INTO vehiculos (placa, ano_vehiculo, num_serial, num_motor, color, fecha_venta, concesionario_vendedor, info_importante, cod_modelo, ci_cliente) VALUES ('1111111','20/01/2001','2222222222','33333333','rojo','24/10/2023','ucab','xd','12345','2757817');
+
 
 ALTER TABLE vehiculos
   ADD PRIMARY KEY (placa),
@@ -226,6 +235,8 @@ CREATE TABLE ordenes_servicio(
   ci_trabajador VARCHAR(8) NOT NULL
 
 );
+
+--INSERT INTO ordenes_servicio (ci_autorizado, nombre_autorizado, hora_entrada, hora_salida_estimada, hora_salida_real, fecha_entrada, fecha_salida_estimada, fecha_salida_real, placa, ci_trabajador) VALUES ('28575817','yisus','12:30:45','12:30:45','12:30:45','24/10/2023','24/10/2023','24/10/2023','1111111','2857817');
 
 ALTER TABLE ordenes_servicio
   ADD PRIMARY KEY (num_unico),
@@ -304,7 +315,7 @@ ALTER TABLE detalle_servicio
     ON DELETE RESTRICT 
     ON UPDATE CASCADE;
 
---
+ --INSERT INTO detalle_servicio (num_unico, cantidad, costo, num_detalle) VALUES ('2',5,100,3);
 
 CREATE TABLE pagos(
   num_factura VARCHAR (10) NOT NULL,

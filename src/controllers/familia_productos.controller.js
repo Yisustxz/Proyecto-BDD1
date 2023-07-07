@@ -70,6 +70,14 @@ const getFamiliaProductoFromRequestBody = (requestBody) => {
   return newFamiliaProducto
 }
 
+const getFamiliaProductoFromRequestBodyU = (requestBody) => {
+  const { nombre } = requestBody
+
+  const newFamiliaProducto = [nombre]
+
+  return newFamiliaProducto
+}
+
 const addFamiliaProducto = async (req, res) => {
   try {
     const newFamiliaProducto = getFamiliaProductoFromRequestBody(req.body)
@@ -91,10 +99,10 @@ const addFamiliaProducto = async (req, res) => {
 
 const updateFamiliaProducto = async (req, res) => {
   try {
-    const updatedFamiliaProducto = getFamiliaProductoFromRequestBody(req.body)
+    const updatedFamiliaProducto = getFamiliaProductoFromRequestBodyU(req.body)
     updatedFamiliaProducto.push(req.params.id)
     const response = await pool.query({
-      text: 'UPDATE familia_productos SET cod_tipo = $1, nombre = $2 WHERE cod_tipo = $3',
+      text: 'UPDATE familia_productos SET nombre = $1 WHERE cod_tipo = $2',
       values: updatedFamiliaProducto
     })
     if (response.rowCount === 0) {
