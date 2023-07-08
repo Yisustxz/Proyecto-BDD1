@@ -64,9 +64,9 @@ const getDetalleServicioById = async (req, res) => {
 }
 
 const getDetalleServicioFromRequestBody = (requestBody) => {
-  const { num_unico, cantidad, costo, num_detalle } = requestBody
+  const { num_unico, cantidad, costo } = requestBody
 
-  const newDetalleServicio = [num_unico, cantidad, costo, num_detalle]
+  const newDetalleServicio = [num_unico, cantidad, costo]
 
   return newDetalleServicio
 }
@@ -84,11 +84,11 @@ const addDetalleServicio = async (req, res) => {
     const newDetalleServicio = getDetalleServicioFromRequestBody(req.body)
 
     const insertar = await pool.query({
-      text: 'INSERT INTO detalle_servicio (num_unico,cantidad,costo,num_detalle) VALUES ($1, $2, $3, $4) RETURNING num_unico,num_detalle',
+      text: 'INSERT INTO detalle_servicio (num_unico,cantidad,costo) VALUES ($1, $2, $3) RETURNING num_unico,num_detalle',
       values: newDetalleServicio
     })
-    const insertedNum_unico = insertar.rows[0].num
-    const insertedNum_detalle = insertar.rows[0].cod
+    const insertedNum_unico = insertar.rows[0].num_unico
+    const insertedNum_detalle = insertar.rows[0].num_detalle
     const response = await pool.query({
       text: 'SELECT * FROM detalle_servicio WHERE num_unico = $1 AND num_detalle = $2',
       values: [insertedNum_unico, insertedNum_detalle]

@@ -69,7 +69,7 @@ const getClienteFromRequestBody = (requestBody) => {
     nombre_cliente,
     correo,
     telefono_principal,
-    telefono_secundaria
+    telefono_secundario
   } = requestBody
 
   const newCliente = [
@@ -77,21 +77,21 @@ const getClienteFromRequestBody = (requestBody) => {
     nombre_cliente,
     correo,
     telefono_principal,
-    telefono_secundaria
+    telefono_secundario
   ]
 
   return newCliente
 }
 
 const getClienteFromRequestBodyU = (requestBody) => {
-  const { nombre_cliente, correo, telefono_principal, telefono_secundaria } =
+  const { nombre_cliente, correo, telefono_principal, telefono_secundario } =
     requestBody
 
   const newCliente = [
     nombre_cliente,
     correo,
     telefono_principal,
-    telefono_secundaria
+    telefono_secundario
   ]
 
   return newCliente
@@ -102,7 +102,7 @@ const addCliente = async (req, res) => {
     const newCliente = getClienteFromRequestBody(req.body)
 
     const insertar = await pool.query({
-      text: 'INSERT INTO clientes (ci_cliente, nombre_cliente, correo, telefono_principal,telefono_secundaria) VALUES ($1, $2, $3, $4, $5) RETURNING ci_cliente',
+      text: 'INSERT INTO clientes (ci_cliente, nombre_cliente, correo, telefono_principal,telefono_secundario) VALUES ($1, $2, $3, $4, $5) RETURNING ci_cliente',
       values: newCliente
     })
     const insertedCi = insertar.rows[0].ci_cliente
@@ -121,7 +121,7 @@ const updateCliente = async (req, res) => {
     const updateCliente = getClienteFromRequestBodyU(req.body)
     updateCliente.push(req.params.id)
     const response = await pool.query({
-      text: 'UPDATE clientes SET nombre_cliente = $1, correo = $2, telefono_principal = $3,telefono_secundaria = $4 WHERE ci_cliente = $5',
+      text: 'UPDATE clientes SET nombre_cliente = $1, correo = $2, telefono_principal = $3,telefono_secundario = $4 WHERE ci_cliente = $5',
       values: updateCliente
     })
     if (response.rowCount === 0) {
