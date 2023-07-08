@@ -9,6 +9,7 @@ const ordenesServicioRouter = require("./api/ordenes_servicio.routes");
 const detalleServicioRouter = require("./api/detalle_servicio.routes");
 const seEspecializaRouter = require("./api/se_especializa.routes");
 const seLeRecomiendanRouter = require("./api/se_le_recomiendan.routes");
+const especificaRouter = require("./api/especifica.routes");
 const router = express.Router();
 
 router.use("/familia_productos", familiaProductosRouter);
@@ -21,6 +22,7 @@ router.use("/ordenesServicios", ordenesServicioRouter);
 router.use("/detalleServicio", detalleServicioRouter);
 router.use("/seEspecializa", seEspecializaRouter);
 router.use("/seLeRecomiendan", seLeRecomiendanRouter);
+router.use("/especifica", especificaRouter);
 
 //router.use('/escuelas', escuelasRouter)
 //router.use('/estudiantes', estudiantesRouter)
