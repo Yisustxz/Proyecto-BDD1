@@ -30,7 +30,7 @@ const getFamiliaProductos = async (req, res) => {
       throw new Error('La tabla está vacía', STATUS_NOT_FOUND)
     }
     const response = await pool.query({
-      text: 'SELECT * FROM familia_productos ORDER BY cod_tipo '
+      text: 'SELECT * FROM familia_productos ORDER BY cod_tipo'
     })
     const pagination = {
       total: isEmpty.rowCount,

@@ -63,19 +63,11 @@ const getPagoById = async (req, res) => {
 };
 
 const getPagoFromRequestBody = (requestBody) => {
-  const {
-    num_factura,
-    num_consecutivo,
-    modalidad,
-    fecha_pago,
-    monto,
-    num_tarjeta,
-    num_banco,
-  } = requestBody;
+  const { num_factura, modalidad, fecha_pago, monto, num_tarjeta, num_banco } =
+    requestBody;
 
   const newPago = [
     num_factura,
-    num_consecutivo,
     modalidad,
     fecha_pago,
     monto,
@@ -91,7 +83,7 @@ const addPago = async (req, res) => {
     const newPago = getPagoFromRequestBody(req.body);
 
     const insertar = await pool.query({
-      text: "INSERT INTO pagos (num_factura, num_consecutivo, modalidad, fecha_pago, monto, num_tarjeta, num_banco) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING num_factura, num_consecutivo",
+      text: "INSERT INTO pagos (num_factura, modalidad, fecha_pago, monto, num_tarjeta, num_banco) VALUES ($1, $2, $3, $4, $5, $6) RETURNING num_factura, num_consecutivo",
       values: newPago,
     });
     const insertedCod = insertar.rows[0].num_factura;

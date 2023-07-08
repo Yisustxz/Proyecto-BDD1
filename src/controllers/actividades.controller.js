@@ -63,19 +63,9 @@ const getActividadById = async (req, res) => {
 };
 
 const getActividadFromRequestBody = (requestBody) => {
-  const {
-    cod_servicio,
-    num_consecutivo,
-    descripcion_actividad,
-    costo_actividad,
-  } = requestBody;
+  const { cod_servicio, descripcion_actividad, costo_actividad } = requestBody;
 
-  const newActividad = [
-    cod_servicio,
-    num_consecutivo,
-    descripcion_actividad,
-    costo_actividad,
-  ];
+  const newActividad = [cod_servicio, descripcion_actividad, costo_actividad];
 
   return newActividad;
 };
@@ -85,7 +75,7 @@ const addActividad = async (req, res) => {
     const newActividad = getActividadFromRequestBody(req.body);
 
     const insertar = await pool.query({
-      text: "INSERT INTO actividades (cod_servicio, num_consecutivo, descripcion_actividad, costo_actividad) VALUES ($1, $2, $3, $4) RETURNING cod_servicio, num_consecutivo",
+      text: "INSERT INTO actividades (cod_servicio, descripcion_actividad, costo_actividad) VALUES ($1, $2, $3) RETURNING cod_servicio, num_consecutivo",
       values: newActividad,
     });
     const insertedCod = insertar.rows[0].cod_servicio;
