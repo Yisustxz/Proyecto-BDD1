@@ -10,6 +10,8 @@ const detalleServicioRouter = require("./api/detalle_servicio.routes");
 const ciudadesRouter = require("./api/ciudades.routes");
 const estadosRouter = require("./api/estados.routes");
 const concesionarioRouter = require("./api/concesionario.routes");
+const descuentosRouter = require("./api/descuentos.routes");
+const serviciosRouter = require("./api/servicios.routes");
 const router = express.Router();
 
 router.use("/familia_productos", familiaProductosRouter);
@@ -23,6 +25,8 @@ router.use("/detalleServicio", detalleServicioRouter);
 router.use("/ciudades", ciudadesRouter);
 router.use("/estados", estadosRouter);
 router.use("/concesionario", concesionarioRouter);
+router.use("/descuentos", descuentosRouter);
+router.use("/servicios", serviciosRouter);
 
 //router.use('/escuelas', escuelasRouter)
 //router.use('/estudiantes', estudiantesRouter)
