@@ -16,6 +16,9 @@ const productosRouter = require("./api/productos.routes");
 const actividadesRouter = require("./api/actividades.routes");
 const facturasRouter = require("./api/facturas.routes");
 const pagosRouter = require("./api/pagos.routes");
+const seEspecializaRouter = require("./api/se_especializa.routes");
+const seLeRecomiendanRouter = require("./api/se_le_recomiendan.routes");
+const especificaRouter = require("./api/especifica.routes");
 const router = express.Router();
 
 router.use("/familia_productos", familiaProductosRouter);
@@ -35,6 +38,9 @@ router.use("/productos", productosRouter);
 router.use("/actividades", actividadesRouter);
 router.use("/facturas", facturasRouter);
 router.use("/pagos", pagosRouter);
+router.use("/seEspecializa", seEspecializaRouter);
+router.use("/seLeRecomiendan", seLeRecomiendanRouter);
+router.use("/especifica", especificaRouter);
 
 //router.use('/escuelas', escuelasRouter)
 //router.use('/estudiantes', estudiantesRouter)
