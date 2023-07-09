@@ -129,7 +129,7 @@ const updateEncargado = async (req, res) => {
     const updateEncargado = getEncargadoFromRequestBodyU(req.body)
     updateEncargado.push(req.params.id)
     const response = await pool.query({
-      text: 'UPDATE encargados SET nombre_encargado = $1,  direccion_encargado = $2, telefono_encargado = $3,correo_trabajador = $4, telefono_secundario_encargado = $5 WHERE ci_encargado = $6',
+      text: 'UPDATE encargados SET nombre_encargado = $1,  direccion_encargado = $2, telefono_encargado = $3,correo_encargado = $4, telefono_secundario_encargado = $5 WHERE ci_encargado = $6',
       values: updateEncargado
     })
     if (response.rowCount === 0) {
