@@ -8,17 +8,21 @@ const {
   deleteFamiliaProducto
 } = require('../../controllers/familia_productos.controller')
 
-/* import { reqQueryValidator } from '../../middlewares/reqQueryPageSizeValidator'
-import { idParamValidator } from '../../middlewares/idParamValidator'
-import { estudiantesSchema } from '../../schemas/estudiantes.schema'
-import { schemaValidator } from '../../middlewares/schemaValidator' */
+const {
+  familiaProductoSchema
+} = require('../../schemas/familia_producto.schemas')
+const { schemaValidator } = require('../../middleware/schemaValidator')
 
 const router = Router()
 
 router.get('/', getFamiliaProductos)
 router.get('/:id', getFamiliaProductosById)
-router.post('/', addFamiliaProducto)
-router.put('/:id', updateFamiliaProducto)
+router.post('/', schemaValidator(familiaProductoSchema), addFamiliaProducto)
+router.put(
+  '/:id',
+  schemaValidator(familiaProductoSchema),
+  updateFamiliaProducto
+)
 router.delete('/:id', deleteFamiliaProducto)
 
 module.exports = router
