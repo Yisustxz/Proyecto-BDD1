@@ -63,8 +63,6 @@ ADD
   CONSTRAINT v_sueldo_trabajador CHECK(sueldo_trabajador >= 0);
 
 -- INSERT INTO trabajadores (ci_trabajador, nombre_trabajador, direccion_trabajador, telefono_trabajador, sueldo_trabajador, cargo) VALUES ('2857817','lui','av a','041448456', 1000, 'A');
-
-
 CREATE TABLE encargados(
   ci_encargado VARCHAR(8) NOT NULL,
   nombre_encargado VARCHAR(40) NOT NULL,
@@ -130,15 +128,15 @@ ADD
   PRIMARY KEY (ci_cliente),
 ADD
   CONSTRAINT v_telefono_secundario CHECK(telefono_secundario != telefono_principal);
-  
+
 --
-  CREATE TABLE concesionario(
-    rif VARCHAR(10) NOT NULL,
-    nombre VARCHAR(15) NOT NULL,
-    cod_est VARCHAR(4) NOT NULL,
-    num_consecutivo INTEGER NOT NULL,
-    ci_encargado VARCHAR(8) NOT NULL
-  );
+CREATE TABLE concesionario(
+  rif VARCHAR(10) NOT NULL,
+  nombre VARCHAR(15) NOT NULL,
+  cod_est VARCHAR(4) NOT NULL,
+  num_consecutivo INTEGER NOT NULL,
+  ci_encargado VARCHAR(8) NOT NULL
+);
 
 ALTER TABLE
   concesionario
@@ -159,10 +157,14 @@ CREATE TABLE servicios(
   cod_servicio VARCHAR(3) NOT NULL,
   nombre_servicio VARCHAR(20) NOT NULL,
   descripcion_servicio TEXT NOT NULL,
-  tiempo_reserva TIMESTAMP,
+  tiempo_reserva INTEGER NOT NULL,
   capacidad INTEGER NOT NULL,
   ci_trabajador VARCHAR(8) NOT NULL,
-  porcentaje DECIMAL NOT NULL
+  porcentaje DECIMAL NOT NULL,
+  CONSTRAINT v_tiempo_reserva CHECK(
+    tiempo_reserva BETWEEN 1
+    AND 7
+  )
 );
 
 ALTER TABLE
@@ -204,7 +206,6 @@ ADD
   CONSTRAINT v_peso CHECK(peso > 0);
 
 --INSERT INTO modelos (cod_modelo, nombre_modelo, num_asiento, marca, peso, t_aceite, aceite_caja, octanaje, t_refrigerante) VALUES ('12345','twingo',4,'ferrari',500,'AM','SAE80W','91','R134');
-
 --
 CREATE TABLE vehiculos(
   placa VARCHAR(7) NOT NULL,
@@ -232,8 +233,7 @@ ADD
 ADD
   CONSTRAINT uk_num_motor UNIQUE (num_motor);
 
-  -- INSERT INTO vehiculos (placa, ano_vehiculo, num_serial, num_motor, color, fecha_venta, concesionario_vendedor, info_importante, cod_modelo, ci_cliente) VALUES ('1111111','20/01/2001','2222222222','33333333','rojo','24/10/2023','ucab','xd','12345','2757817');
-
+-- INSERT INTO vehiculos (placa, ano_vehiculo, num_serial, num_motor, color, fecha_venta, concesionario_vendedor, info_importante, cod_modelo, ci_cliente) VALUES ('1111111','20/01/2001','2222222222','33333333','rojo','24/10/2023','ucab','xd','12345','2757817');
 --
 CREATE TABLE reserva(
   cod_reserva VARCHAR(6) NOT NULL,
@@ -283,8 +283,7 @@ ADD
 ADD
   CONSTRAINT v_fecha_salida_real CHECK(fecha_salida_real >= fecha_entrada);
 
-  --INSERT INTO ordenes_servicio (ci_autorizado, nombre_autorizado, hora_entrada, hora_salida_estimada, hora_salida_real, fecha_entrada, fecha_salida_estimada, fecha_salida_real, placa, ci_trabajador) VALUES ('28575817','yisus','12:30:45','12:30:45','12:30:45','24/10/2023','24/10/2023','24/10/2023','1111111','2857817');
-
+--INSERT INTO ordenes_servicio (ci_autorizado, nombre_autorizado, hora_entrada, hora_salida_estimada, hora_salida_real, fecha_entrada, fecha_salida_estimada, fecha_salida_real, placa, ci_trabajador) VALUES ('28575817','yisus','12:30:45','12:30:45','12:30:45','24/10/2023','24/10/2023','24/10/2023','1111111','2857817');
 --
 CREATE TABLE productos(
   cod_producto VARCHAR(6) NOT NULL,

@@ -7,6 +7,11 @@ const {
   updateDescuento,
   deleteDescuento,
 } = require("../../controllers/descuentos.controller");
+const { schemaValidator } = require("../../middleware/schemaValidator");
+const {
+  descuentoSchema,
+  descuentoSchemaU,
+} = require("../../schemas/descuentos.schemas");
 
 /* import { reqQueryValidator } from '../../middlewares/reqQueryPageSizeValidator'
 import { idParamValidator } from '../../middlewares/idParamValidator'
@@ -17,8 +22,8 @@ const router = Router();
 
 router.get("/", getDescuentos);
 router.get("/:porcentaje", getDescuentosById);
-router.post("/", addDescuento);
-router.put("/:porcentaje", updateDescuento);
+router.post("/", schemaValidator(descuentoSchema), addDescuento);
+router.put("/:porcentaje", schemaValidator(descuentoSchemaU), updateDescuento);
 router.delete("/:porcentaje", deleteDescuento);
 
 module.exports = router;
