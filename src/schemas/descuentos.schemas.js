@@ -1,5 +1,7 @@
 const { z } = require("zod");
 
+let rango_minimo; 
+
 const descuentoSchema = z.object({
   porcentaje: z
     .number()
