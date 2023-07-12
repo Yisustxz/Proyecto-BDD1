@@ -3,7 +3,7 @@ const { z } = require("zod");
 const servicioSchema = z.object({
   cod_servicio: z
     .string()
-    .nonempty("Es necesario indicar el nombre del servicio")
+    .nonempty("Es necesario indicar el código del servicio")
     .max(3, "El codigo del servicio puede tener máximo 3 caracteres"),
   nombre_servicio: z
     .string()

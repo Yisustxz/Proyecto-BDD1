@@ -388,17 +388,7 @@ ADD
 ADD
   CONSTRAINT num_factura_fk FOREIGN KEY (num_factura) REFERENCES facturas(num_factura) ON DELETE RESTRICT ON UPDATE CASCADE,
 ADD
-  CONSTRAINT v_monto CHECK(monto > 0),
-ADD
-  CONSTRAINT v_num_tarjeta CHECK(
-    modalidad IN ('TD', 'TC')
-    OR num_tarjeta IS NOT NULL
-  ),
-ADD
-  CONSTRAINT v_num_banco CHECK(
-    modalidad IN ('TD', 'TC')
-    OR num_banco IS NOT NULL
-  );
+  CONSTRAINT v_monto CHECK(monto > 0);
 
 --
 CREATE TABLE se_especializa(
