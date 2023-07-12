@@ -6,17 +6,20 @@ const {
   updateEncargado,
   deleteEncargado
 } = require('../../controllers/encargados.controller')
-/* import { reqQueryValidator } from '../../middlewares/reqQueryPageSizeValidator'
-import { idParamValidator } from '../../middlewares/idParamValidator'
-import { estudiantesSchema } from '../../schemas/estudiantes.schema'
-import { schemaValidator } from '../../middlewares/schemaValidator' */
+
+const {
+  encargadosSchema,
+  encargadosSchemaU
+} = require('../../schemas/encargados.schemas')
+
+const { schemaValidator } = require('../../middleware/schemaValidator')
 
 const router = Router()
 
 router.get('/', getEncargados)
 router.get('/:id', getEncargadoById)
-router.post('/', addEncargado)
-router.put('/:id', updateEncargado)
+router.post('/', schemaValidator(encargadosSchema), addEncargado)
+router.put('/:id', schemaValidator(encargadosSchemaU), updateEncargado)
 router.delete('/:id', deleteEncargado)
 
 module.exports = router

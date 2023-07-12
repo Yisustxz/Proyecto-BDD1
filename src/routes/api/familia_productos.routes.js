@@ -9,7 +9,8 @@ const {
 } = require('../../controllers/familia_productos.controller')
 
 const {
-  familiaProductoSchema
+  familiaProductoSchema,
+  familiaProductoSchemaU
 } = require('../../schemas/familia_producto.schemas')
 const { schemaValidator } = require('../../middleware/schemaValidator')
 
@@ -20,7 +21,7 @@ router.get('/:id', getFamiliaProductosById)
 router.post('/', schemaValidator(familiaProductoSchema), addFamiliaProducto)
 router.put(
   '/:id',
-  schemaValidator(familiaProductoSchema),
+  schemaValidator(familiaProductoSchemaU),
   updateFamiliaProducto
 )
 router.delete('/:id', deleteFamiliaProducto)

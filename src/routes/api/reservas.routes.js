@@ -8,6 +8,13 @@ const {
   deleteReserva
 } = require('../../controllers/reservas.controller')
 
+const {
+  reservaSchema,
+  reservaSchemaU
+} = require('../../schemas/reservas.schemas')
+
+const { schemaValidator } = require('../../middleware/schemaValidator')
+
 /* import { reqQueryValidator } from '../../middlewares/reqQueryPageSizeValidator'
 import { idParamValidator } from '../../middlewares/idParamValidator'
 import { estudiantesSchema } from '../../schemas/estudiantes.schema'
@@ -17,8 +24,8 @@ const router = Router()
 
 router.get('/', getReservas)
 router.get('/:cod', getReservaById)
-router.post('/', addReserva)
-router.put('/:cod', updateReserva)
+router.post('/', schemaValidator(reservaSchema), addReserva)
+router.put('/:cod', schemaValidator(reservaSchemaU), updateReserva)
 router.delete('/:cod', deleteReserva)
 
 module.exports = router

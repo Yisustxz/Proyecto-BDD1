@@ -6,17 +6,20 @@ const {
   updateTrabajador,
   deleteTrabajador
 } = require('../../controllers/trabajadores.controller')
-/* import { reqQueryValidator } from '../../middlewares/reqQueryPageSizeValidator'
-import { idParamValidator } from '../../middlewares/idParamValidator'
-import { estudiantesSchema } from '../../schemas/estudiantes.schema'
-import { schemaValidator } from '../../middlewares/schemaValidator' */
+
+const {
+  trabajadoresSchema,
+  trabajadoresSchemaU
+} = require('../../schemas/trabajadores.schemas')
+
+const { schemaValidator } = require('../../middleware/schemaValidator')
 
 const router = Router()
 
 router.get('/', getTrabajadores)
 router.get('/:id', getTrabajadorById)
-router.post('/', addTrabajador)
-router.put('/:id', updateTrabajador)
+router.post('/', schemaValidator(trabajadoresSchema), addTrabajador)
+router.put('/:id', schemaValidator(trabajadoresSchemaU), updateTrabajador)
 router.delete('/:id', deleteTrabajador)
 
 module.exports = router
