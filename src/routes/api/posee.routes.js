@@ -7,6 +7,10 @@ const {
   deletePosee
 } = require('../../controllers/posee.controller')
 
+const { poseeSchema } = require('../../schemas/posee.schemas')
+
+const { schemaValidator } = require('../../middleware/schemaValidator')
+
 /* import { reqQueryValidator } from '../../middlewares/reqQueryPageSizeValidator'
 import { idParamValidator } from '../../middlewares/idParamValidator'
 import { estudiantesSchema } from '../../schemas/estudiantes.schema'
@@ -16,7 +20,7 @@ const router = Router()
 
 router.get('/', getPosee)
 router.get('/:unic/:detail', getPoseeById)
-router.post('/', addPosee)
+router.post('/', schemaValidator(poseeSchema), addPosee)
 router.delete('/:unic/:detail', deletePosee)
 
 module.exports = router
