@@ -7,6 +7,11 @@ const {
   updateConcesionario,
   deleteConcesionario,
 } = require("../../controllers/concesionario.controller");
+const { schemaValidator } = require("../../middleware/schemaValidator");
+const {
+  concesionarioSchema,
+  concesionarioSchemaU,
+} = require("../../schemas/concesarios.schemas");
 
 /* import { reqQueryValidator } from '../../middlewares/reqQueryPageSizeValidator'
 import { idParamValidator } from '../../middlewares/idParamValidator'
@@ -17,8 +22,8 @@ const router = Router();
 
 router.get("/", getConcesionarios);
 router.get("/:rif", getConcesionarioById);
-router.post("/", addConcesionario);
-router.put("/:rif", updateConcesionario);
+router.post("/", schemaValidator(concesionarioSchema), addConcesionario);
+router.put("/:rif", schemaValidator(concesionarioSchemaU), updateConcesionario);
 router.delete("/:rif", deleteConcesionario);
 
 module.exports = router;

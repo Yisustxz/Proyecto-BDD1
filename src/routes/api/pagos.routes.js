@@ -7,6 +7,8 @@ const {
   updatePago,
   deletePago,
 } = require("../../controllers/pagos.controller");
+const { schemaValidator } = require("../../middleware/schemaValidator");
+const { pagoSchema, pagoSchemaU } = require("../../schemas/pagos.schemas");
 
 /* import { reqQueryValidator } from '../../middlewares/reqQueryPageSizeValidator'
 import { idParamValidator } from '../../middlewares/idParamValidator'
@@ -17,8 +19,8 @@ const router = Router();
 
 router.get("/", getPagos);
 router.get("/:cod/:num", getPagoById);
-router.post("/", addPago);
-router.put("/:cod/:num", updatePago);
+router.post("/", schemaValidator(pagoSchema), addPago);
+router.put("/:cod/:num", schemaValidator(pagoSchemaU), updatePago);
 router.delete("/:cod/:num", deletePago);
 
 module.exports = router;

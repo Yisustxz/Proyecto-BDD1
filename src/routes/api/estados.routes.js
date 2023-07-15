@@ -7,6 +7,11 @@ const {
   updateEstado,
   deleteEstado,
 } = require("../../controllers/estados.controller");
+const { schemaValidator } = require("../../middleware/schemaValidator");
+const {
+  estadoSchema,
+  estadoSchemaU,
+} = require("../../schemas/estados.schemas");
 
 /* import { reqQueryValidator } from '../../middlewares/reqQueryPageSizeValidator'
 import { idParamValidator } from '../../middlewares/idParamValidator'
@@ -17,8 +22,8 @@ const router = Router();
 
 router.get("/", getEstados);
 router.get("/:cod", getEstadosById);
-router.post("/", addEstado);
-router.put("/:cod", updateEstado);
+router.post("/", schemaValidator(estadoSchema), addEstado);
+router.put("/:cod", schemaValidator(estadoSchemaU), updateEstado);
 router.delete("/:cod", deleteEstado);
 
 module.exports = router;
