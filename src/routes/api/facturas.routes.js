@@ -7,6 +7,11 @@ const {
   updateFacturas,
   deleteFactura,
 } = require("../../controllers/facturas.controller");
+const { schemaValidator } = require("../../middleware/schemaValidator");
+const {
+  facturaSchema,
+  facturaSchemaU,
+} = require("../../schemas/facturas.schemas");
 
 /* import { reqQueryValidator } from '../../middlewares/reqQueryPageSizeValidator'
 import { idParamValidator } from '../../middlewares/idParamValidator'
@@ -17,8 +22,8 @@ const router = Router();
 
 router.get("/", getFacturas);
 router.get("/:id", getFacturaById);
-router.post("/", addFactura);
-router.put("/:id", updateFacturas);
+router.post("/", schemaValidator(facturaSchema), addFactura);
+router.put("/:id", schemaValidator(facturaSchemaU), updateFacturas);
 router.delete("/:id", deleteFactura);
 
 module.exports = router;
