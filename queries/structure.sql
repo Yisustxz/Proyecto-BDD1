@@ -57,7 +57,7 @@ CREATE TABLE encargados(
   correo_encargado VARCHAR(20),
   telefono_secundario_encargado VARCHAR(11),
   PRIMARY KEY (ci_encargado),
-  CONSTRAINT v_telefono_secundario_trabajador CHECK(
+  CONSTRAINT v_telefono_secundario_encargado CHECK(
     telefono_secundario_encargado != telefono_encargado)
 );
 
