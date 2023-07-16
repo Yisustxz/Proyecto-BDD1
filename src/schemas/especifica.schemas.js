@@ -7,7 +7,7 @@ const especificaSchema = z.object({
     .string()
     .nonempty("Debe indicar un código de servicio para la actividad")
     .max(3, "El código puede tener como máximo 3 caracteres"),
-  num_consectivo: z.number().int("El número consecutivo debe ser entero"),
+  num_consecutivo: z.number().int("El número consecutivo debe ser entero"),
 });
 
 module.exports = { especificaSchema };
