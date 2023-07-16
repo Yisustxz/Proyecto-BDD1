@@ -52,7 +52,7 @@ const getPagoById = async (req, res) => {
     });
     if (response.rowCount === 0) {
       throw new Error(
-        `No se pudo encontrar el pago ${req.params.num} de la factura ${req.params.cod}`,
+        `No se pudo encontrar el pago con numero ${req.params.num} de la factura ${req.params.cod}`,
         STATUS_NOT_FOUND
       );
     }

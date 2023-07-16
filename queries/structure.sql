@@ -58,7 +58,8 @@ CREATE TABLE encargados(
   telefono_secundario_encargado VARCHAR(11),
   PRIMARY KEY (ci_encargado),
   CONSTRAINT v_telefono_secundario_encargado CHECK(
-    telefono_secundario_encargado != telefono_encargado)
+    telefono_secundario_encargado != telefono_encargado
+  )
 );
 
 --
@@ -76,12 +77,11 @@ CREATE TABLE descuentos(
   PRIMARY KEY (porcentaje),
   CONSTRAINT v_rango_max CHECK(rango_max > rango_min),
   CONSTRAINT v_rango_min CHECK(rango_min > 0),
-   CONSTRAINT v_porcentaje CHECK(
+  CONSTRAINT v_porcentaje CHECK(
     porcentaje BETWEEN 0
     AND 100
   )
 );
-
 
 --
 CREATE TABLE clientes(
@@ -91,25 +91,24 @@ CREATE TABLE clientes(
   telefono_principal VARCHAR(11) NULL,
   telefono_secundario VARCHAR(11) NULL,
   PRIMARY KEY (ci_cliente),
-   CONSTRAINT v_telefono_secundario CHECK(telefono_secundario != telefono_principal)
+  CONSTRAINT v_telefono_secundario CHECK(telefono_secundario != telefono_principal)
 );
 
 --
-  CREATE TABLE concesionario(
-    rif VARCHAR(10) NOT NULL,
-    nombre VARCHAR(15) NOT NULL,
-    cod_est VARCHAR(4) NOT NULL,
-    num_consecutivo INTEGER NOT NULL,
-    ci_encargado VARCHAR(8) NOT NULL,
-    PRIMARY KEY (rif),
-    CONSTRAINT cod_est_fk FOREIGN KEY (cod_est, num_consecutivo) REFERENCES ciudades(cod_est, num_consecutivo) ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT ci_encargado_fk FOREIGN KEY (ci_encargado) REFERENCES encargados(ci_encargado) ON DELETE RESTRICT ON UPDATE CASCADE
-  );
+CREATE TABLE concesionario(
+  rif VARCHAR(10) NOT NULL,
+  nombre VARCHAR(15) NOT NULL,
+  cod_est VARCHAR(4) NOT NULL,
+  num_consecutivo INTEGER NOT NULL,
+  ci_encargado VARCHAR(8) NOT NULL,
+  PRIMARY KEY (rif),
+  CONSTRAINT cod_est_fk FOREIGN KEY (cod_est, num_consecutivo) REFERENCES ciudades(cod_est, num_consecutivo) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT ci_encargado_fk FOREIGN KEY (ci_encargado) REFERENCES encargados(ci_encargado) ON DELETE RESTRICT ON UPDATE CASCADE
+);
 
 --
 /* INSERT INTO clientes (ci_cliente, nombre_cliente, correo, telefono_principal, telefono_secundaria) VALUES ('2757817','lui','sdadad@gmail','041448456','041438428') 
  */
-
 CREATE TABLE servicios(
   cod_servicio VARCHAR(3) NOT NULL,
   nombre_servicio VARCHAR(20) NOT NULL,
@@ -132,7 +131,6 @@ CREATE TABLE servicios(
   )
 );
 
-
 --
 CREATE TABLE modelos(
   cod_modelo VARCHAR(5) NOT NULL,
@@ -146,7 +144,7 @@ CREATE TABLE modelos(
   t_refrigerante VARCHAR(5) NOT NULL,
   PRIMARY KEY (cod_modelo),
   CONSTRAINT v_num_asiento CHECK(num_asiento > 0),
-   CONSTRAINT v_peso CHECK(peso > 0)
+  CONSTRAINT v_peso CHECK(peso > 0)
 );
 
 --INSERT INTO modelos (cod_modelo, nombre_modelo, num_asiento, marca, peso, t_aceite, aceite_caja, octanaje, t_refrigerante) VALUES ('12345','twingo',4,'ferrari',500,'AM','SAE80W','91','R134');
@@ -171,7 +169,6 @@ CREATE TABLE vehiculos(
 
 -- INSERT INTO vehiculos (placa, ano_vehiculo, num_serial, num_motor, color, fecha_venta, concesionario_vendedor, info_importante, cod_modelo, ci_cliente) VALUES ('1111111','20/01/2001','2222222222','33333333','rojo','24/10/2023','ucab','xd','12345','2757817');
 --
-
 CREATE TABLE reserva(
   cod_reserva VARCHAR(6) NOT NULL,
   placa VARCHAR(7) NOT NULL,
@@ -204,7 +201,6 @@ CREATE TABLE ordenes_servicio(
   CONSTRAINT v_fecha_salida_estimada CHECK(fecha_salida_estimada >= fecha_entrada),
   CONSTRAINT v_fecha_salida_real CHECK(fecha_salida_real >= fecha_entrada)
 );
-
 
 --INSERT INTO ordenes_servicio (ci_autorizado, nombre_autorizado, hora_entrada, hora_salida_estimada, hora_salida_real, fecha_entrada, fecha_salida_estimada, fecha_salida_real, placa, ci_trabajador) VALUES ('28575817','yisus','12:30:45','12:30:45','12:30:45','24/10/2023','24/10/2023','24/10/2023','1111111','2857817');
 --
@@ -265,7 +261,6 @@ CREATE TABLE detalle_servicio(
   CONSTRAINT v_cantidad_detalle CHECK(cantidad > 0)
 );
 
-
 -- --INSERT INTO detalle_servicio (num_unico, cantidad, costo, num_detalle) VALUES ('2',5,100,3);
 CREATE TABLE pagos(
   num_factura VARCHAR (10) NOT NULL,
@@ -286,7 +281,6 @@ CREATE TABLE pagos(
     modalidad IN ('TD', 'TC')
     OR num_banco IS NOT NULL
   )
-
 );
 
 --
@@ -325,7 +319,7 @@ CREATE TABLE utiliza(
   cod_producto VARCHAR(6) NOT NULL,
   precio_actual DECIMAL NOT NULL,
   cantidad_usada INTEGER NOT NULL,
-   PRIMARY KEY (
+  PRIMARY KEY (
     num_unico,
     num_detalle,
     ci_trabajador,
@@ -337,7 +331,6 @@ CREATE TABLE utiliza(
   CONSTRAINT v_precio_actual CHECK(precio_actual > 0),
   CONSTRAINT v_cantidad_usada CHECK(cantidad_usada > 0)
 );
-
 
 --
 CREATE TABLE se_le_recomiendan(
@@ -363,7 +356,7 @@ CREATE TABLE especifica(
   num_detalle INTEGER NOT NULL,
   cod_actividad VARCHAR(3) NOT NULL,
   num_consecutivo INTEGER NOT NULL,
-   PRIMARY KEY(
+  PRIMARY KEY(
     num_unico,
     num_detalle,
     cod_actividad,
