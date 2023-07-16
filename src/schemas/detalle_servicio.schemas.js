@@ -6,8 +6,7 @@ const detalleServicioSchema = z.object({
     .number()
     .int('La cantidad debe ser entero')
     .positive('la cantidad debe ser positiva'),
-  costo: z.number(),
-  num_detalle: z.number()
+  costo: z.number()
 })
 
 const detalleServicioSchemaU = z.object({

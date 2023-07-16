@@ -121,7 +121,7 @@ CREATE TABLE servicios(
   CONSTRAINT v_tiempo_reserva CHECK(
     tiempo_reserva BETWEEN 1
     AND 7
-  )
+  ),
   PRIMARY KEY (cod_servicio),
   CONSTRAINT ci_trabajador_fk FOREIGN KEY (ci_trabajador) REFERENCES trabajadores(ci_trabajador) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT porcentaje_fk FOREIGN KEY (porcentaje) REFERENCES descuentos(porcentaje) ON DELETE RESTRICT ON UPDATE CASCADE,
