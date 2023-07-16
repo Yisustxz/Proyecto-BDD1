@@ -27,7 +27,7 @@ const router = express.Router()
 
 router.use('/FamiliaProductos', familiaProductosRouter)
 router.use('/modelos', modelosRouter)
-router.use('/vehiculos', vehiculosRouter)
+router.use('/Vehiculos', vehiculosRouter)
 router.use('/clientes', clientesRouter)
 router.use('/Trabajador', trabajadoresRouter)
 router.use('/Encargado', encargadosRouter)
