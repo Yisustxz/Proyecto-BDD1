@@ -380,14 +380,13 @@ WHERE
 
 -- esta algo sus y hay que discutirlo 
 SELECT
-  v.cod_modelo AS "Cod_mod",
+  m.cod_modelo AS "Cod_mod",
   m.nombre_modelo AS "Nombre Modelo",
   s.nombre_servicio AS "Nombre_Servicio",
-  slh.kilometraje AS "Kilometraje",
-  slh.tiempo_uso AS "Tiempo de uso"
+  sr.kilometraje AS "Kilometraje",
+  sr.tiempo_uso AS "Tiempo de uso"
 FROM
   modelos m
-INNER JOIN vehiculos v ON m.cod_modelo = v.cod_modelo
-LEFT JOIN se_le_hacen slh ON v.placa = slh.placa
-LEFT JOIN servicios s ON slh.cod_servicio = s.cod_servicio
-ORDER BY v.cod_modelo, s.cod_servicio;
+LEFT JOIN se_le_recomiendan sr ON m.cod_modelo = sr.cod_modelo
+LEFT JOIN servicios s ON sr.cod_servicio = s.cod_servicio
+ORDER BY m.cod_modelo, s.cod_servicio;
