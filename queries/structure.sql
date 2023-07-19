@@ -6,6 +6,11 @@ CREATE DOMAIN dom_modalidad as VARCHAR(2) NOT NULL CHECK (
   OR VALUE = 'TD'
   OR VALUE = 'TC'
 );
+/* EB = efectivo en bolívares 
+ED = efectivo en dólares
+T = transferencia
+TD = tarjeta de débito
+TC = tarjeta de crédito */
 
 CREATE DOMAIN dom_aceite as VARCHAR(3) NOT NULL CHECK (
   VALUE = 'AM'
@@ -14,13 +19,28 @@ CREATE DOMAIN dom_aceite as VARCHAR(3) NOT NULL CHECK (
   OR VALUE = 'AAM'
   OR VALUE = 'AMG'
 );
+/* AM = aceite mineral 
+AS = aceite sintetico 
+ASS = aceite semisintetico 
+AAM = aceite alta milla 
+AMG = aceite multigrado */
 
--- AM = aceite mineral AS= aceite sintetico ASS = aceite semisintetico 
---AAM = aceite alta milla AMG= aceite multigrado 
-CREATE DOMAIN dom_cargo as VARCHAR(2) NOT NULL CHECK (VALUE = 'A');
+CREATE DOMAIN dom_cargo as VARCHAR(2) NOT NULL CHECK (
+  VALUE = 'A'
+  OR VALUE = 'GV'
+  OR VALUE = 'VA'
+  OR VALUE = 'GF'
+  OR VALUE = 'TS'
+  OR VALUE = 'AS'
+);
+/* A= analista
+GV = gerente de ventas
+VA = Vendedor de autos
+GF = Gerente de finanzas
+TS = Técnico de servicio
+AS = Asesor de servicio
+*/
 
--- A= analista
---
 CREATE TABLE estados(
   cod_est VARCHAR(4) NOT NULL,
   nombre_est VARCHAR(20) NOT NULL,
