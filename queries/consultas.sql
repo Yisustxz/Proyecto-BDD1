@@ -125,3 +125,269 @@ FROM
 	maxAtendidos
 WHERE
 	veces_atendido = maximo_atendido
+
+
+
+------------------------------------------------------------------------
+-- Personal que realiza más/menos servicios por mes
+SELECT 
+  t.ci_trabajador,
+  t.nombre_trabajador,
+  EXTRACT(MONTH FROM os.fecha_salida_real) AS mes,
+  COUNT(os.num_unico) AS cantidad_servicios
+FROM
+  trabajadores t
+LEFT JOIN 
+  ordenes_servicio os ON t.ci_trabajador = os.ci_trabajador
+GROUP BY 
+  t.ci_trabajador, t.nombre_trabajador, mes
+ORDER BY 
+  mes, cantidad_servicios DESC;
+
+
+-------------------------------------------------------------------------------------
+
+/* --  Lista ordenada de clientes frecuentes ( por ejemplo dado un rango de fecha, conocer
+la cantidad de veces que cada cliente solicitó algún servicio y el monto del servicio ) y
+cumplimiento de la política de cliente frecuente. */
+
+
+SELECT
+  c.ci_cliente,
+  c.nombre_cliente,
+  COUNT(DISTINCT os.num_unico) AS cantidad_servicios,
+  SUM(fs.monto_total) AS monto_acumulado,
+  CASE
+    WHEN COUNT(DISTINCT os.num_unico) >= 3 AND SUM(fs.monto_total) >= 2000 THEN 'Cumple'
+    ELSE 'No Cumple'
+  END AS politica_cumplida
+FROM
+  clientes c
+LEFT JOIN vehiculos v ON c.ci_cliente = v.ci_cliente
+LEFT JOIN ordenes_servicio os ON v.placa = os.placa
+LEFT JOIN facturas fs ON os.num_unico = fs.num_unico
+WHERE
+  os.fecha_entrada BETWEEN '2023-01-01' AND '2023-12-31' -- Ajusta el rango de fechas según tus necesidades
+GROUP BY
+  c.ci_cliente,
+  c.nombre_cliente
+ORDER BY
+  cantidad_servicios DESC,
+  monto_acumulado DESC;
+
+
+-----------------------------------------------------------------------------------
+/* Producto(s) con mayor/menos salida por ventas, porcentaje de productos no
+ecológicos en el almacén. */
+
+-- hay 2 formas individualmente y todo en conjunto para esto 
+
+-- 1 forma individual 
+
+/* Producto con mayor salida por ventas: */
+SELECT
+  p.cod_producto,
+  p.nombre_producto,
+  SUM(d.cantidad) AS total_salida_ventas
+FROM
+  productos p
+JOIN utiliza u ON p.cod_producto = u.cod_producto
+JOIN detalle_servicio d ON u.num_unico = d.num_unico AND u.num_detalle = d.num_detalle
+GROUP BY
+  p.cod_producto,
+  p.nombre_producto
+ORDER BY
+  total_salida_ventas DESC
+LIMIT 1;
+
+/* Producto con menor salida por ventas: */
+
+SELECT
+  p.cod_producto,
+  p.nombre_producto,
+  SUM(d.cantidad) AS total_salida_ventas
+FROM
+  productos p
+JOIN utiliza u ON p.cod_producto = u.cod_producto
+JOIN detalle_servicio d ON u.num_unico = d.num_unico AND u.num_detalle = d.num_detalle
+GROUP BY
+  p.cod_producto,
+  p.nombre_producto
+ORDER BY
+  total_salida_ventas
+LIMIT 1;
+
+
+/* Porcentaje de productos no ecológicos en el almacén: */
+
+SELECT
+  COUNT(*) AS total_productos,
+  SUM(CASE WHEN es_ecologico = FALSE THEN 1 ELSE 0 END) AS productos_no_ecologicos,
+  (SUM(CASE WHEN es_ecologico = FALSE THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS porcentaje_no_ecologicos
+FROM
+  productos;
+
+
+-- 2 forma terrorista 
+
+WITH ventas_productos AS (
+  SELECT
+    p.cod_producto,
+    p.nombre_producto,
+    SUM(d.cantidad) AS total_salida_ventas
+  FROM
+    productos p
+  JOIN utiliza u ON p.cod_producto = u.cod_producto
+  JOIN detalle_servicio d ON u.num_unico = d.num_unico AND u.num_detalle = d.num_detalle
+  GROUP BY
+    p.cod_producto,
+    p.nombre_producto
+)
+SELECT
+  MAX(vp.cod_producto) AS producto_max_salida_ventas,
+  MAX(vp.nombre_producto) AS nombre_producto_max_salida,
+  MAX(vp.total_salida_ventas) AS total_salida_max,
+  MIN(vp.cod_producto) AS producto_min_salida_ventas,
+  MIN(vp.nombre_producto) AS nombre_producto_min_salida,
+  MIN(vp.total_salida_ventas) AS total_salida_min,
+  COUNT(*) AS total_productos,
+  SUM(CASE WHEN p.es_ecologico = FALSE THEN 1 ELSE 0 END) AS productos_no_ecologicos,
+  (SUM(CASE WHEN p.es_ecologico = FALSE THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS porcentaje_no_ecologicos
+FROM
+  ventas_productos vp
+CROSS JOIN productos p;
+
+
+----------------------------------------------------------------------------------------------
+
+/* Servicio (s) que más/menos se han solicitado
+Esta consulta utiliza la tabla "servicios" y la tabla "reserva" para contar cuántas veces se ha solicitado cada servicio. Usamos una función de agregación COUNT para contar el número de reservas asociadas a cada servicio. Luego, ordenamos los resultados en orden descendente según el conteo y utilizamos LIMIT 1 para obtener el servicio más solicitado. Si quieres obtener el servicio menos solicitado, simplemente cambia el orden a ASC y elimina LIMIT 1.
+
+Si deseas obtener todos los servicios con sus conteos, puedes eliminar la cláusula LIMIT 1 de la consulta.
+*/
+
+
+SELECT
+  s.cod_servicio,
+  s.nombre_servicio,
+  COUNT(r.cod_reserva) AS total_solicitudes
+FROM
+  servicios s
+LEFT JOIN reserva r ON s.cod_servicio = r.cod_servicio
+GROUP BY
+  s.cod_servicio,
+  s.nombre_servicio
+ORDER BY
+  COUNT(r.cod_reserva) DESC
+LIMIT 1;
+
+---------------------------------------------------------------------------------------------------------
+
+/* Histórico de uso de servicios por vehículo */
+
+SELECT
+  v.placa AS "Placa vehículo",
+  s.cod_servicio AS "CodServicio",
+  s.nombre_servicio AS "Nombre servicio",
+  os.fecha_entrada AS "Fecha entrada",
+  os.hora_entrada AS "Hora entrada",
+  os.fecha_salida_real AS "Fecha Salida Real",
+  os.hora_salida_real AS "Hora salida real"
+FROM
+  vehiculos v
+LEFT JOIN ordenes_servicio os ON v.placa = os.placa
+LEFT JOIN servicios s ON os.ci_trabajador = s.ci_trabajador
+ORDER BY
+  v.placa,
+  os.fecha_entrada,
+  os.hora_entrada;
+
+
+-----------------------------------------------------------------------------------------------------
+
+/* Comparación entre las distintas agencias, cual factura más/menos por servicios, en un
+lapso de tiempo dado. */
+
+SELECT
+  co.nombre AS "Agencia",
+  COUNT(DISTINCT f.num_factura) AS "Cantidad de Facturas",
+  SUM(f.monto_total) AS "Monto Total Facturado"
+FROM
+  concesionario co
+LEFT JOIN ordenes_servicio os ON co.nombre = os.concesionario_vendedor
+LEFT JOIN facturas f ON os.num_unico = f.num_unico
+WHERE
+  f.fecha_factura BETWEEN '2023-01-01' AND '2023-12-31'
+GROUP BY
+  co.nombre
+ORDER BY
+  SUM(f.monto_total) DESC;
+
+-----------------------------------------------------------------------------------------------------
+
+/*  Clientes que hacen reservas y después no usan el servicio. */
+
+
+-- discutir porque esta muy sus 
+SELECT
+  c.ci_cliente AS "Cédula Cliente",
+  c.nombre_cliente AS "Nombre Cliente",
+  v.placa AS "Placa Vehículo",
+  r.cod_reserva AS "Código Reserva",
+  r.fecha_reservada AS "Fecha Reserva"
+FROM
+  clientes c
+INNER JOIN vehiculos v ON c.ci_cliente = v.ci_cliente
+INNER JOIN reserva r ON v.placa = r.placa
+LEFT JOIN facturas f ON r.cod_reserva = f.num_unico
+WHERE
+  f.num_unico IS NULL;
+
+-----------------------------------------------------------------------------------------------------
+
+/*  Generación de factura por cliente con todo su detalle */
+
+
+SELECT
+  f.num_factura AS "Número de Factura",
+  c.ci_cliente AS "Cédula Cliente",
+  c.nombre_cliente AS "Nombre Cliente",
+  v.placa AS "Placa Vehículo",
+  os.fecha_entrada AS "Fecha Entrada",
+  os.fecha_salida_real AS "Fecha Salida Real",
+  f.costo_mano_obra AS "Costo Mano de Obra",
+  f.monto_total AS "Monto Total",
+  p.cod_producto AS "Código Producto",
+  p.nombre_producto AS "Nombre Producto",
+  p.precio AS "Precio Unitario",
+  us.cantidad_usada AS "Cantidad Utilizada",
+  us.cantidad_usada * p.precio AS "Subtotal Producto"
+FROM
+  facturas f
+INNER JOIN ordenes_servicio os ON f.num_unico = os.num_unico
+INNER JOIN vehiculos v ON os.placa = v.placa
+INNER JOIN clientes c ON v.ci_cliente = c.ci_cliente
+LEFT JOIN detalle_servicio ds ON os.num_unico = ds.num_unico
+LEFT JOIN utiliza us ON ds.num_unico = us.num_unico AND ds.num_detalle = us.num_detalle
+LEFT JOIN productos p ON us.cod_producto = p.cod_producto
+WHERE
+  c.ci_cliente = '27596432';
+
+
+--------------------------------------------------------------------------------------------------
+
+-- Programa de mantenimiento por modelo de vehículo
+
+-- esta algo sus y hay que discutirlo 
+SELECT
+  v.cod_modelo AS "Cod_mod",
+  m.nombre_modelo AS "Nombre Modelo",
+  s.nombre_servicio AS "Nombre_Servicio",
+  slh.kilometraje AS "Kilometraje",
+  slh.tiempo_uso AS "Tiempo de uso"
+FROM
+  modelos m
+INNER JOIN vehiculos v ON m.cod_modelo = v.cod_modelo
+LEFT JOIN se_le_hacen slh ON v.placa = slh.placa
+LEFT JOIN servicios s ON slh.cod_servicio = s.cod_servicio
+ORDER BY v.cod_modelo, s.cod_servicio;
