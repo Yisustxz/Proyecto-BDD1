@@ -65,7 +65,7 @@ CREATE TABLE trabajadores(
   sueldo_trabajador DECIMAL NOT NULL,
   cargo dom_cargo NOT NULL,
   PRIMARY KEY (ci_trabajador),
-  CONSTRAINT v_sueldo_trabajador CHECK(sueldo_trabajador >= 0)
+  CONSTRAINT v_sueldo_trabajador CHECK(sueldo_trabajador > 0)
 );
 
 -- INSERT INTO trabajadores (ci_trabajador, nombre_trabajador, direccion_trabajador, telefono_trabajador, sueldo_trabajador, cargo) VALUES ('2857817','lui','av a','041448456', 1000, 'A');
@@ -278,7 +278,8 @@ CREATE TABLE detalle_servicio(
   num_detalle SERIAL NOT NULL,
   PRIMARY KEY (num_unico, num_detalle),
   CONSTRAINT num_unico_fk FOREIGN KEY (num_unico) REFERENCES ordenes_servicio(num_unico) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT v_cantidad_detalle CHECK(cantidad > 0)
+  CONSTRAINT v_cantidad_detalle CHECK(cantidad > 0),
+  CONSTRAINT v_costo_detalle CHECK(costo > 0)
 );
 
 -- --INSERT INTO detalle_servicio (num_unico, cantidad, costo, num_detalle) VALUES ('2',5,100,3);
@@ -292,15 +293,7 @@ CREATE TABLE pagos(
   num_banco VARCHAR(20) DEFAULT NULL,
   PRIMARY KEY (num_factura, num_consecutivo),
   CONSTRAINT num_factura_fk FOREIGN KEY (num_factura) REFERENCES facturas(num_factura) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT v_monto CHECK(monto > 0),
-  CONSTRAINT v_num_tarjeta CHECK(
-    modalidad IN ('TD', 'TC')
-    OR num_tarjeta IS NOT NULL
-  ),
-  CONSTRAINT v_num_banco CHECK(
-    modalidad IN ('TD', 'TC')
-    OR num_banco IS NOT NULL
-  )
+  CONSTRAINT v_monto CHECK(monto > 0)
 );
 
 --
