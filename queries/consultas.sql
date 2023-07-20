@@ -139,6 +139,7 @@ FROM
   trabajadores t
 LEFT JOIN 
   ordenes_servicio os ON t.ci_trabajador = os.ci_trabajador
+WHERE os.fecha_salida_real BETWEEN '2023-01-01' AND '2023-12-31'
 GROUP BY 
   t.ci_trabajador, t.nombre_trabajador, mes
 ORDER BY 
@@ -155,24 +156,27 @@ cumplimiento de la política de cliente frecuente. */
 SELECT
   c.ci_cliente,
   c.nombre_cliente,
-  COUNT(DISTINCT os.num_unico) AS cantidad_servicios,
-  SUM(fs.monto_total) AS monto_acumulado,
-  CASE
-    WHEN COUNT(DISTINCT os.num_unico) >= 3 AND SUM(fs.monto_total) >= 2000 THEN 'Cumple'
-    ELSE 'No Cumple'
-  END AS politica_cumplida
+  s.nombre_servicio,
+  COUNT(os.num_unico) AS veces_contratado,
+  SUM(fs.monto_total) AS monto_acumulado
 FROM
   clientes c
-LEFT JOIN vehiculos v ON c.ci_cliente = v.ci_cliente
-LEFT JOIN ordenes_servicio os ON v.placa = os.placa
-LEFT JOIN facturas fs ON os.num_unico = fs.num_unico
+LEFT JOIN vehiculos v USING (ci_cliente)
+INNER JOIN ordenes_servicio os USING(placa)
+INNER JOIN facturas fs USING(num_unico)
+INNER JOIN especifica e ON os.num_unico = e.num_unico
+RIGHT JOIN servicios s ON e.cod_actividad = s.cod_servicio
+INNER JOIN descuentos d USING (porcentaje)
 WHERE
   os.fecha_entrada BETWEEN '2023-01-01' AND '2023-12-31' -- Ajusta el rango de fechas según tus necesidades
 GROUP BY
   c.ci_cliente,
-  c.nombre_cliente
+  c.nombre_cliente,
+  s.nombre_servicio,
+  d.rango_min
+HAVING (COUNT(DISTINCT os.num_unico) >= d.rango_min)
 ORDER BY
-  cantidad_servicios DESC,
+  veces_contratado DESC,
   monto_acumulado DESC;
 
 
