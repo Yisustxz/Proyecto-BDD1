@@ -184,7 +184,7 @@ ORDER BY
 /* Producto(s) con mayor/menos salida por ventas, porcentaje de productos no
 ecológicos en el almacén. */
 
--- hay 2 formas individualmente y todo en conjunto para esto 
+-- hay 2 formas individualmente 
 
 -- 1 forma individual 
 
@@ -230,36 +230,6 @@ SELECT
   (SUM(CASE WHEN es_ecologico = FALSE THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS porcentaje_no_ecologicos
 FROM
   productos;
-
-
--- 2 forma terrorista 
-
-WITH ventas_productos AS (
-  SELECT
-    p.cod_producto,
-    p.nombre_producto,
-    SUM(d.cantidad) AS total_salida_ventas
-  FROM
-    productos p
-  JOIN utiliza u ON p.cod_producto = u.cod_producto
-  JOIN detalle_servicio d ON u.num_unico = d.num_unico AND u.num_detalle = d.num_detalle
-  GROUP BY
-    p.cod_producto,
-    p.nombre_producto
-)
-SELECT
-  MAX(vp.cod_producto) AS producto_max_salida_ventas,
-  MAX(vp.nombre_producto) AS nombre_producto_max_salida,
-  MAX(vp.total_salida_ventas) AS total_salida_max,
-  MIN(vp.cod_producto) AS producto_min_salida_ventas,
-  MIN(vp.nombre_producto) AS nombre_producto_min_salida,
-  MIN(vp.total_salida_ventas) AS total_salida_min,
-  COUNT(*) AS total_productos,
-  SUM(CASE WHEN p.es_ecologico = FALSE THEN 1 ELSE 0 END) AS productos_no_ecologicos,
-  (SUM(CASE WHEN p.es_ecologico = FALSE THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS porcentaje_no_ecologicos
-FROM
-  ventas_productos vp
-CROSS JOIN productos p;
 
 
 ----------------------------------------------------------------------------------------------
@@ -337,8 +307,6 @@ ORDER BY
 
 /*  Clientes que hacen reservas y después no usan el servicio. */
 
-
--- discutir porque esta muy sus 
 SELECT
   c.ci_cliente AS "Cédula Cliente",
   c.nombre_cliente AS "Nombre Cliente",
@@ -387,7 +355,6 @@ WHERE
 
 -- Programa de mantenimiento por modelo de vehículo
 
--- esta algo sus y hay que discutirlo 
 SELECT
   m.cod_modelo AS "Cod_mod",
   m.nombre_modelo AS "Nombre Modelo",
