@@ -123,7 +123,8 @@ CREATE TABLE concesionario(
   ci_encargado VARCHAR(8) NOT NULL,
   PRIMARY KEY (rif),
   CONSTRAINT cod_est_fk FOREIGN KEY (cod_est, num_consecutivo) REFERENCES ciudades(cod_est, num_consecutivo) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT ci_encargado_fk FOREIGN KEY (ci_encargado) REFERENCES encargados(ci_encargado) ON DELETE RESTRICT ON UPDATE CASCADE
+  CONSTRAINT ci_encargado_fk FOREIGN KEY (ci_encargado) REFERENCES encargados(ci_encargado) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT ci_encargado_unique UNIQUE(ci_encargado)
 );
 
 --
@@ -256,7 +257,8 @@ CREATE TABLE facturas(
   PRIMARY KEY(num_factura),
   CONSTRAINT num_unico_fk FOREIGN KEY (num_unico) REFERENCES ordenes_servicio(num_unico) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT v_costo_mano_obra CHECK(costo_mano_obra > 0),
-  CONSTRAINT v_monto_total CHECK(monto_total > 0)
+  CONSTRAINT v_monto_total CHECK(monto_total > 0),
+  CONSTRAINT num_unico_unique UNIQUE(num_unico)
 );
 
 --
@@ -279,7 +281,9 @@ CREATE TABLE detalle_servicio(
   PRIMARY KEY (num_unico, num_detalle),
   CONSTRAINT num_unico_fk FOREIGN KEY (num_unico) REFERENCES ordenes_servicio(num_unico) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT v_cantidad_detalle CHECK(cantidad > 0),
-  CONSTRAINT v_costo_detalle CHECK(costo > 0)
+  CONSTRAINT v_costo_detalle CHECK(costo > 0),
+  CONSTRAINT num_unico_unique_detalle UNIQUE(num_unico)
+  
 );
 
 -- --INSERT INTO detalle_servicio (num_unico, cantidad, costo, num_detalle) VALUES ('2',5,100,3);

@@ -11,6 +11,7 @@ import { handleControllerError } from '../utils/handleControllerError' */
 const STATUS_OK = 200;
 const STATUS_CREATED = 201;
 const STATUS_NOT_FOUND = 404;
+const STATUS_ERROR = 400;
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_SIZE = 10;
@@ -81,6 +82,18 @@ const getPagoFromRequestBody = (requestBody) => {
 const addPago = async (req, res) => {
   try {
     const newPago = getPagoFromRequestBody(req.body);
+
+    const cantPagos = await pool.query({
+      text: "SELECT * FROM pagos WHERE num_factura = $1",
+      values: [newPago[0]],
+    });
+
+    if (cantPagos.rows.length == 2) {
+      throw new Error(
+        `Se pueden realizar máximo 2 pagos por factura`,
+        STATUS_ERROR
+      );
+    }
 
     const insertar = await pool.query({
       text: "INSERT INTO pagos (num_factura, modalidad, fecha_pago, monto, num_tarjeta, num_banco) VALUES ($1, $2, $3, $4, $5, $6) RETURNING num_factura, num_consecutivo",
