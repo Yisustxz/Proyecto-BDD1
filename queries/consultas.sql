@@ -270,20 +270,16 @@ Si deseas obtener todos los servicios con sus conteos, puedes eliminar la cláus
 SELECT
   s.cod_servicio,
   s.nombre_servicio,
-  COUNT(DISTINCT r.cod_reserva) AS total_reserva,
-  COUNT(DISTINCT os.num_unico) AS total_ordenes,
-  COUNT(DISTINCT r.cod_reserva) + COUNT(DISTINCT os.num_unico) AS total_solicitudes
+  COUNT(r.cod_reserva) AS total_solicitudes
 FROM
   servicios s
-LEFT JOIN reserva r USING (cod_servicio)
-INNER JOIN especifica e ON s.cod_servicio = e.cod_actividad
-INNER JOIN ordenes_servicio os USING (num_unico)
+LEFT JOIN reserva r ON s.cod_servicio = r.cod_servicio
 GROUP BY
   s.cod_servicio,
   s.nombre_servicio
 ORDER BY
-  total_solicitudes ASC
-LIMIT 1
+  COUNT(r.cod_reserva) DESC
+LIMIT 1;
 
 ---------------------------------------------------------------------------------------------------------
 
@@ -312,20 +308,18 @@ ORDER BY
 /* Comparación entre las distintas agencias, cual factura más/menos por servicios, en un
 lapso de tiempo dado. */
 
-SELECT co.rif AS "Rif Agencia",
+SELECT
   co.nombre AS "Agencia",
   COUNT(DISTINCT f.num_factura) AS "Cantidad de Facturas",
   SUM(f.monto_total) AS "Monto Total Facturado"
 FROM
   concesionario co
-INNER JOIN posee p USING (rif)
-INNER JOIN vehiculos v USING (cod_modelo)
-INNER JOIN ordenes_servicio os USING (placa)
-INNER JOIN facturas f USING (num_unico)
+LEFT JOIN ordenes_servicio os ON co.nombre = os.concesionario_vendedor
+LEFT JOIN facturas f ON os.num_unico = f.num_unico
 WHERE
   f.fecha_factura BETWEEN '2023-01-01' AND '2023-12-31'
 GROUP BY
-  co.rif, co.nombre
+  co.nombre
 ORDER BY
   SUM(f.monto_total) DESC;
 
@@ -345,8 +339,9 @@ FROM
   clientes c
 INNER JOIN vehiculos v ON c.ci_cliente = v.ci_cliente
 INNER JOIN reserva r ON v.placa = r.placa
-WHERE r.fecha_reservada < CURRENT_DATE AND
-r.asistio = false;
+LEFT JOIN facturas f ON r.cod_reserva = f.num_unico
+WHERE
+  f.num_unico IS NULL;
 
 -----------------------------------------------------------------------------------------------------
 
@@ -392,7 +387,6 @@ SELECT
   sr.tiempo_uso AS "Tiempo de uso"
 FROM
   modelos m
-INNER JOIN se_le_recomiendan sr ON m.cod_modelo = sr.cod_modelo
-INNER JOIN servicios s ON sr.cod_servicio = s.cod_servicio
-WHERE m.cod_modelo = 'aa'
+LEFT JOIN se_le_recomiendan sr ON m.cod_modelo = sr.cod_modelo
+LEFT JOIN servicios s ON sr.cod_servicio = s.cod_servicio
 ORDER BY m.cod_modelo, s.cod_servicio;
