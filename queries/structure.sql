@@ -281,7 +281,6 @@ CREATE TABLE detalle_servicio(
   PRIMARY KEY (num_unico, num_detalle),
   CONSTRAINT num_unico_fk FOREIGN KEY (num_unico) REFERENCES ordenes_servicio(num_unico) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT v_cantidad_detalle CHECK(cantidad > 0),
-  CONSTRAINT v_costo_detalle CHECK(costo > 0),
   CONSTRAINT num_unico_unique_detalle UNIQUE(num_unico)
   
 );

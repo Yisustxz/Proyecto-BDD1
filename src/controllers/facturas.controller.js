@@ -63,21 +63,9 @@ const getFacturaById = async (req, res) => {
 };
 
 const getFacturaFromRequestBody = (requestBody) => {
-  const {
-    num_factura,
-    costo_mano_obra,
-    monto_total,
-    fecha_factura,
-    num_unico,
-  } = requestBody;
+  const { num_factura, fecha_factura, num_unico } = requestBody;
 
-  const newFactura = [
-    num_factura,
-    costo_mano_obra,
-    monto_total,
-    fecha_factura,
-    num_unico,
-  ];
+  const newFactura = [num_factura, fecha_factura, num_unico];
 
   return newFactura;
 };
@@ -86,8 +74,35 @@ const addFactura = async (req, res) => {
   try {
     const newFactura = getFacturaFromRequestBody(req.body);
 
+    const detalle_servicio = await pool.query({
+      text: "SELECT * FROM detalle_servicio WHERE num_unico = $1",
+      values: [newFactura[2]],
+    });
+
+    const productos_utilizados = await pool.query({
+      text: "SELECT * FROM utiliza WHERE num_unico = $1",
+      values: [newFactura[2]],
+    });
+
+    let costo_producto = 0;
+
+    for (let i = 0; i < productos_utilizados.rows.length; i++) {
+      costo_producto =
+        costo_producto +
+        productos_utilizados.rows[i].precio_actual *
+          productos_utilizados.rows[i].cantidad_usada;
+    }
+
+    const costo_mano_obra =
+      detalle_servicio.rows[0].cantidad * detalle_servicio.rows[0].costo;
+
+    const monto_total = costo_producto + costo_mano_obra;
+
+    newFactura.push(costo_mano_obra);
+    newFactura.push(monto_total);
+
     const insertar = await pool.query({
-      text: "INSERT INTO facturas (num_factura, costo_mano_obra, monto_total, fecha_factura, num_unico) VALUES ($1, $2, $3, $4, $5) RETURNING num_factura",
+      text: "INSERT INTO facturas (num_factura, fecha_factura, num_unico, costo_mano_obra, monto_total) VALUES ($1, $2, $3, $4, $5) RETURNING num_factura",
       values: newFactura,
     });
     const insertedId = insertar.rows[0].num_factura;

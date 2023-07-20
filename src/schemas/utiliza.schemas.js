@@ -11,7 +11,7 @@ const utilizaSchema = z.object({
     .string()
     .nonempty('Es necesario indicar un codigo de producto')
     .max(6, 'El codigo de prodcuto es demasiado largo'),
-  precio_actual: z.number().positive('el precio actual tiene que ser positivo'),
+  precio_actual: z.number(),
   cantidad_usada: z
     .number()
     .positive('La cantidad usada tiene que ser positivo')

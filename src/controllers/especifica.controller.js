@@ -93,6 +93,29 @@ const addEspecifica = async (req, res) => {
     const insertedDetail = insertar.rows[0].num_detalle;
     const insertedCod = insertar.rows[0].cod_actividad;
     const insertedNum = insertar.rows[0].num_consecutivo;
+
+    /*const actividad = await pool.query({
+      text: "SELECT * FROM actividades WHERE cod_servicio = $1 AND num_consecutivo = $2",
+      values: [insertedCod, insertedNum],
+    });
+
+
+
+    await pool.query({
+      text: "UPDATE detalle_servicio SET costo = costo + $1 WHERE num_unico = $2 AND num_detalle = $3",
+      values: [actividad.rows[0].costo_actividad, insertedUnic, insertedDetail],
+    });
+
+    const detalle = await pool.query({
+      text: "SELECT * detalle_servicio WHERE num_unico = $1 AND num_detalle = $2",
+      values: [insertedUnic, insertedDetail],
+    });
+
+    await pool.query({
+      text: "UPDATE factura SET costo = costo + $1 WHERE num_unico = $2 AND num_detalle = $3",
+      values: [actividad.rows[0].costo_actividad, insertedUnic, insertedDetail],
+    });*/
+
     const response = await pool.query({
       text: "SELECT * FROM especifica WHERE num_unico = $1 AND num_detalle = $2 AND cod_actividad = $3 AND num_consecutivo = $4",
       values: [insertedUnic, insertedDetail, insertedCod, insertedNum],

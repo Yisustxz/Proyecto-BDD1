@@ -16,6 +16,8 @@ const STATUS_ERROR = 400;
 const DEFAULT_PAGE = 1;
 const DEFAULT_SIZE = 10;
 
+const tasa_dolar = 25;
+
 const getPagos = async (req, res) => {
   try {
     const { page = DEFAULT_PAGE, size = DEFAULT_SIZE } = req.query;
@@ -83,18 +85,34 @@ const addPago = async (req, res) => {
   try {
     const newPago = getPagoFromRequestBody(req.body);
 
-    const cantPagos = await pool.query({
+    const pago = await pool.query({
       text: "SELECT * FROM pagos WHERE num_factura = $1",
       values: [newPago[0]],
     });
 
-    if (cantPagos.rows.length == 2) {
+    if (pago.rows.length == 2) {
       throw new Error(
         `Se pueden realizar máximo 2 pagos por factura`,
         STATUS_ERROR
       );
     }
 
+    if (pago.rows.length == 1) {
+      const factura = await pool.query({
+        text: "SELECT * FROM facturas WHERE num_factura = $1",
+        values: [newPago[0]],
+      });
+      let monto = newPago[3];
+      let montoPago1 = pago.rows[0].monto;
+      if (newPago[1] != "ED") monto = monto / tasa_dolar;
+      if (pago.rows[0].modalidad != "ED") montoPago1 = montoPago1 / tasa_dolar;
+      if (factura.rows[0].monto_total - montoPago1 - monto > 0) {
+        throw new Error(
+          `El segundo pago no completa el monto total de la factura`,
+          STATUS_ERROR
+        );
+      }
+    }
     const insertar = await pool.query({
       text: "INSERT INTO pagos (num_factura, modalidad, fecha_pago, monto, num_tarjeta, num_banco) VALUES ($1, $2, $3, $4, $5, $6) RETURNING num_factura, num_consecutivo",
       values: newPago,
