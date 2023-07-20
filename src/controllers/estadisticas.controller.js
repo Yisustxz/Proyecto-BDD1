@@ -115,7 +115,7 @@ const getProductoMayor = async (req, res) => {
         STATUS_NOT_FOUND
       )
     }
-    return successResponse(res, STATUS_OK, response.rows)
+    return successResponse(res, STATUS_OK, response.rows[0])
   } catch (error) {
     res.send(error.message)
   }
@@ -188,7 +188,7 @@ const getProductoMenor = async (req, res) => {
         STATUS_NOT_FOUND
       )
     }
-    return successResponse(res, STATUS_OK, response.rows)
+    return successResponse(res, STATUS_OK, response.rows[0])
   } catch (error) {
     res.send(error.message)
   }
@@ -210,7 +210,7 @@ const getProductoEcologico = async (req, res) => {
         STATUS_NOT_FOUND
       )
     }
-    return successResponse(res, STATUS_OK, response.rows)
+    return successResponse(res, STATUS_OK, response.rows[0])
   } catch (error) {
     res.send(error.message)
   }
