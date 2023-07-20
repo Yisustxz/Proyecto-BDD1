@@ -23,6 +23,7 @@ const reservaRouter = require('./api/reservas.routes')
 const seLeHacenRouter = require('./api/se_le_hacen.routes')
 const utilizaRouter = require('./api/utiliza.routes')
 const poseeRouter = require('./api/posee.routes')
+const estadisticasRouter = require('./api/estadisticas.routes')
 const router = express.Router()
 
 router.use('/FamiliaProductos', familiaProductosRouter)
@@ -49,8 +50,6 @@ router.use('/reservas', reservaRouter)
 router.use('/Mantenimientos', seLeHacenRouter)
 router.use('/ProductosUtilizados', utilizaRouter)
 router.use('/ModelosPosee', poseeRouter)
-
-//router.use('/escuelas', escuelasRouter)
-//router.use('/estudiantes', estudiantesRouter)
+router.use('/Estadisticas', estadisticasRouter)
 
 module.exports = router
