@@ -63,7 +63,165 @@ const getModelosVehiculosServicio = async (req, res) => {
   }
 }
 
+const fechaTotal = () => {
+  const fechaInicio = '2023-01-01'
+  const fechaFinal = '2023-12-31'
+
+  const newTrabajadorServicio = [fechaInicio, fechaFinal]
+
+  return newTrabajadorServicio
+}
+
+const getTrabajadorServicioMes = async (req, res) => {
+  try {
+    const newEstadistica = fechaTotal()
+    const response = await pool.query({
+      text: 'SELECT t.ci_trabajador,t.nombre_trabajador, EXTRACT(MONTH FROM os.fecha_salida_real) AS mes,COUNT(os.num_unico) AS cantidad_servicios FROM trabajadores t LEFT JOIN ordenes_servicio os ON t.ci_trabajador = os.ci_trabajador WHERE os.fecha_salida_real BETWEEN $1 AND $2 GROUP BY t.ci_trabajador, t.nombre_trabajador, mes ORDER BY mes, cantidad_servicios DESC',
+      values: newEstadistica
+    })
+    if (response.rowCount === 0) {
+      throw new Error(
+        `No se encontro ningun trabajador que realizo algun servicio en el 2023`,
+        STATUS_NOT_FOUND
+      )
+    }
+    return successResponse(res, STATUS_OK, response.rows)
+  } catch (error) {
+    res.send(error.message)
+  }
+}
+
+const getProductoMayor = async (req, res) => {
+  try {
+    const response = await pool.query({
+      text: `SELECT
+      p.cod_producto,
+      p.nombre_producto,
+      SUM(d.cantidad) AS total_salida_ventas
+    FROM
+      productos p
+    JOIN utiliza u ON p.cod_producto = u.cod_producto
+    JOIN detalle_servicio d ON u.num_unico = d.num_unico AND u.num_detalle = d.num_detalle
+    GROUP BY
+      p.cod_producto,
+      p.nombre_producto
+    ORDER BY
+      total_salida_ventas DESC
+    LIMIT 1`
+    })
+    if (response.rowCount === 0) {
+      throw new Error(
+        `No se encontro ningun Producto con el mayor numero de ventas`,
+        STATUS_NOT_FOUND
+      )
+    }
+    return successResponse(res, STATUS_OK, response.rows)
+  } catch (error) {
+    res.send(error.message)
+  }
+}
+
+const getClientesFrecuentes = async (req, res) => {
+  try {
+    const newEstadistica = fechaTotal()
+    const response = await pool.query({
+      text: `SELECT
+      c.ci_cliente,
+      c.nombre_cliente,
+      s.nombre_servicio,
+      COUNT(os.num_unico) AS veces_contratado,
+      SUM(fs.monto_total) AS monto_acumulado
+    FROM
+      clientes c
+    LEFT JOIN vehiculos v USING (ci_cliente)
+    INNER JOIN ordenes_servicio os USING(placa)
+    INNER JOIN facturas fs USING(num_unico)
+    INNER JOIN especifica e ON os.num_unico = e.num_unico
+    RIGHT JOIN servicios s ON e.cod_actividad = s.cod_servicio
+    INNER JOIN descuentos d USING (porcentaje)
+    WHERE
+      os.fecha_entrada BETWEEN $1 AND $2 
+    GROUP BY
+      c.ci_cliente,
+      c.nombre_cliente,
+      s.nombre_servicio,
+      d.rango_min
+    HAVING (COUNT(DISTINCT os.num_unico) >= d.rango_min)
+    ORDER BY
+      veces_contratado DESC,
+      monto_acumulado DESC`,
+      values: newEstadistica
+    })
+    if (response.rowCount === 0) {
+      throw new Error(
+        `No se encontro ningun trabajador que realizo algun servicio en el 2023`,
+        STATUS_NOT_FOUND
+      )
+    }
+    return successResponse(res, STATUS_OK, response.rows)
+  } catch (error) {
+    res.send(error.message)
+  }
+}
+
+const getProductoMenor = async (req, res) => {
+  try {
+    const response = await pool.query({
+      text: `SELECT
+      p.cod_producto,
+      p.nombre_producto,
+      SUM(d.cantidad) AS total_salida_ventas
+    FROM
+      productos p
+    JOIN utiliza u ON p.cod_producto = u.cod_producto
+    JOIN detalle_servicio d ON u.num_unico = d.num_unico AND u.num_detalle = d.num_detalle
+    GROUP BY
+      p.cod_producto,
+      p.nombre_producto
+    ORDER BY
+      total_salida_ventas
+    LIMIT 1`
+    })
+    if (response.rowCount === 0) {
+      throw new Error(
+        `No se encontro ningun Producto con el menor numero de ventas`,
+        STATUS_NOT_FOUND
+      )
+    }
+    return successResponse(res, STATUS_OK, response.rows)
+  } catch (error) {
+    res.send(error.message)
+  }
+}
+
+const getProductoEcologico = async (req, res) => {
+  try {
+    const response = await pool.query({
+      text: `SELECT
+      COUNT(*) AS total_productos,
+      SUM(CASE WHEN es_ecologico = FALSE THEN 1 ELSE 0 END) AS productos_no_ecologicos,
+      (SUM(CASE WHEN es_ecologico = FALSE THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS porcentaje_no_ecologicos
+    FROM
+      productos `
+    })
+    if (response.rowCount === 0) {
+      throw new Error(
+        `No se encontro ningun Producto ecologico para el porcentaje`,
+        STATUS_NOT_FOUND
+      )
+    }
+    return successResponse(res, STATUS_OK, response.rows)
+  } catch (error) {
+    res.send(error.message)
+  }
+}
+
 module.exports = {
   getModelosVehiculosPeriodo,
-  getModelosVehiculosServicio
+  getModelosVehiculosServicio,
+  getTrabajadorServicioMes,
+  getClientesFrecuentes,
+  getProductoMayor,
+  getProductoMenor,
+  getProductoEcologico
 }
