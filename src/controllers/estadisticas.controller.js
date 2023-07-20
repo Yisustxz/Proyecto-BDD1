@@ -30,7 +30,7 @@ const getModelosVehiculosPeriodo = async (req, res) => {
         STATUS_NOT_FOUND
       )
     }
-    return successResponse(res, STATUS_OK, response.rows[0])
+    return successResponse(res, STATUS_OK, response.rows)
   } catch (error) {
     res.send(error.message)
   }
